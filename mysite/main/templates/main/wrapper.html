@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  	<title>
+      {% block title %}
+          BLogg
+      {% endblock %}
+    </title>
+    <meta charset="utf-8">
+    {% load static %}
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{%static 'main/css/style.css'%}">
+  </head>
+  <body>
+
+		<div class="wrapper d-flex align-items-stretch">
+			<nav id="sidebar">
+				<div class="custom-menu">
+					<button type="button" id="sidebarCollapse" class="btn btn-primary">
+	        </button>
+        </div>
+	  		<div class="img bg-wrap text-center py-4" style="background-image: url({% static 'main/images/bg_1.jpg' %});">
+	  			<div class="user-logo">
+	  				<div class="img" style="background-image: url({% static 'main/images/logo.jpg' %})"></div>
+	  				<h3>AnnenAI</h3>
+	  			</div>
+	  		</div>
+        <ul class="list-unstyled components mb-5">
+          <li class="active">
+            <a href="{% url 'index' %}"><span class="fa fa-home mr-3"></span> Home</a>
+          </li>
+          <li>
+            <a href="{% url 'contact' %}"><span class="fa fa-address-book-o mr-3"></span> Contact</a>
+          </li>
+          <li>
+            <a href="{% url 'show_blog' %}"><span class="fa fa-pencil-square mr-3"></span>Blog</a>
+          </li>
+          <li>
+            <a href="{% url 'add_post' %}"><span class="fa fa-pencil-square mr-3"></span>Add new post</a>
+          </li>
+    	</nav>
+
+        <!-- Page Content  -->
+      <div id="content" class="p-4 p-md-5 pt-5">
+            {% block content %}
+            {% endblock %}
+      </div>
+    </div>
+    <script src="{% static 'main/js/jquery.min.js' %}"></script>
+    <script src="{% static 'main/js/popper.js' %}"></script>
+    <script src="{% static 'main/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'main/js/main.js' %}"></script>
+  </body>
+</html>

@@ -1,0 +1,13 @@
+{%extends "main/wrapper.html" %}
+{% block title %}
+    {{post.title}}
+{% endblock %}
+
+
+{% block content %}
+    <h3>{{post.title}}</h3>
+    <h6>on {{post.date}}</h6>
+    <small><a href="{% url 'edit_post' post.slug %}">(Edit)</a></small>
+    {{post.body|safe|linebreaks}}
+<button type="button" class="btn btn-light"><a href="{% url 'show_blog' %}">Back to blog</a></button>
+{% endblock %}

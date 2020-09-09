@@ -1,0 +1,35 @@
+{%extends "main/wrapper.html" %}
+
+{% block content %}
+  <form method="GET" action="{% url 'search_results' %}">
+        <div class="form-row">
+            <div class="form-group col-12">
+                <div class="input-group">
+                    <input class="form-control py-2 border-right-0 border" type="search" name="q" placeholder="Search..." />
+                    <span class="input-group-append">
+                        <div class="input-group-text bg-transparent">
+                            <i class="fa fa-search"></i>
+                        </div>
+                    </span>
+                    <button type="submit"  class="btn btn-primary ml-2">Search</button>
+                </div>
+            </div>
+        </div>
+
+  </form>
+  <h3>Количество постов: {{page_obj.end_index}} из {{page_obj.paginator.count}}</h3>
+    {% for post in post_list %}
+    <div class="row">
+        <div class="col-1">
+            {% if post.picture %}
+                <img src="{{ post.picture.url }}" style="height: 70px; width:70px;"/>
+            {% endif %}
+       </div>
+       <div class="col-4">
+            <h5><a href="{% url 'show_post' post.slug %}">{{post.title}}</a></h5>
+            <p>{{ post.date|date:"Y-m-d" }} <small><a href="{% url 'edit_post' post.slug %}">(Edit)</a></small></p>
+       </div>
+    </div>
+    {% endfor %}
+    {% include 'blog/_pagination.html'%}
+{% endblock %}
