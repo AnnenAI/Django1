@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from blog.models import Post
 from django.shortcuts import get_object_or_404
-from django.views.generic import ListView,DetailView, CreateView, UpdateView
+from django.views.generic import ListView,DetailView, CreateView, UpdateView, DeleteView
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponse
 from django.db.models import Q
+from django.urls import reverse_lazy
 from .forms import EditForm, AddForm
 
 class PostList(ListView):
@@ -23,6 +24,11 @@ class UpdatePostView(UpdateView):
     form_class=EditForm
     template_name='blog/update_post.html'
     #fields=['title','slug','body','date','picture']
+
+class DeletePostView(DeleteView):
+    model=Post
+    template_name='blog/delete_post.html'
+    success_url=reverse_lazy('show_blog')
 
 def show_blog(request):
     template='blog/blog.html'

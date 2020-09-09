@@ -9,14 +9,15 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     slug = models.SlugField(max_length=250, blank=True)
     body = models.TextField()
-    date = models.DateTimeField(default=datetime.now)
+    post_date = models.DateTimeField(default=datetime.now)
+    update_date = models.DateTimeField(default=datetime.now)
     picture = models.ImageField(upload_to='posts/', null=True)
 
     def __str__(self):
         return self.title + ' | '+str(self.author)
 
     class Meta:
-        ordering = ["-date"]
+        ordering = ["-post_date"]
 
     def get_absolute_url(self):
             return reverse('show_blog')

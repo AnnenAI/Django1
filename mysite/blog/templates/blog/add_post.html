@@ -1,28 +1,28 @@
 {% extends 'main/wrapper.html'%}
 
 {% block title %}
-Adding new post
+  Adding new post
 {% endblock %}
 
 {% block content %}
-<h1>Add Post</h1>
-<form method="POST" enctype="multipart/form-data">
-  <div class="col-7">
-      <div class="form-group">
-          {% csrf_token %}
-          {{ form.media }}
-          {{ form.as_p }}
-          <button class="btn btn-success">Post</button>
+  <h1>Add Post</h1>
+  <form method="POST" enctype="multipart/form-data">
+      <div class="col-7">
+          <div class="form-group">
+              {% csrf_token %}
+              {{ form.media }}
+              {{ form.as_p }}
+              <button class="btn btn-success">Post</button>
+          </div>
       </div>
-  </div>
-</form>
+  </form>
 
-<script type="text/javascript" src="/static/admin/js/urlify.js"></script>
+  <script type="text/javascript" src="/static/admin/js/urlify.js"></script>
 
-<script type="text/javascript">
-document.getElementById("id_title").onkeyup = function() {
-    var e = document.getElementById("id_slug");
-    if (!e._changed) { e.value = URLify(document.getElementById("id_title").value, 50); }
-}
-</script>
+  <script type="text/javascript">
+      document.getElementById("id_title").onkeyup = function() {
+        var e = document.getElementById("id_slug");
+        if (!e._changed) { e.value = URLify(document.getElementById("id_title").value, 50); }
+      }
+  </script>
 {% endblock %}
