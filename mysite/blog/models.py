@@ -5,10 +5,21 @@ from datetime import datetime
 from ckeditor.fields import RichTextField
 from django.urls import reverse
 
+class Category(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+            return reverse('index')
+
+
 class Post(models.Model):
     title = models.CharField(max_length=200)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     slug = models.SlugField(max_length=250)
+    category=models.CharField(max_length=200,default='general')
     body = RichTextField()
     post_date = models.DateTimeField(default=datetime.now)
     update_date = models.DateTimeField(default=datetime.now)

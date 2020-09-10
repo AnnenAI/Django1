@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from blog.models import Post
+from blog.models import Post, Category
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView,DetailView, CreateView, UpdateView, DeleteView
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -11,7 +11,7 @@ from .forms import EditForm, AddForm
 class PostListView(ListView):
     queryset = Post.objects.all()
     template_name = 'blog/blog.html'
-    paginate_by = 6
+    paginate_by = 5
     context_object_name = 'post_list'
 
 class AddPostView(CreateView):
@@ -19,10 +19,22 @@ class AddPostView(CreateView):
     form_class=AddForm
     template_name='blog/add_post.html'
 
+class AddCategoryView(CreateView):
+    model=Category
+    fields='__all__'
+    template_name='blog/add_category.html'
+
 class UpdatePostView(UpdateView):
     model=Post
     form_class=EditForm
     template_name='blog/update_post.html'
+
+def Show_Category(request,category):
+    context = {
+        'category':category.title,
+        'post_list':Post.objects.filter(category=category)
+    }
+    return render(request,'blog/show_category.html',context)
 
 class DeletePostView(DeleteView):
     model=Post
@@ -41,7 +53,7 @@ class PostDetailView(DetailView):
 class SearchListView(ListView):
     model=Post
     template_name = 'blog/blog.html'
-    paginate_by = 6
+    paginate_by = 5
     context_object_name = 'post_list'
 
     def get_queryset(self):

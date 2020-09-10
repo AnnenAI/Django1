@@ -6,6 +6,7 @@
 
 {% block content %}
     <h3>{{post.title}}</h3>
+    <small>Category : <a href="{% url 'show_category' post.category %}">{{ post.category }}</small><br/>
     <small>created : {{ post.post_date }}</small><br/>
     <small>edited : {{ post.update_date }}</small><br/>
     {% if user.is_authenticated %}

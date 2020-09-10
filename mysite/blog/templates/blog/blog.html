@@ -25,15 +25,16 @@
                 <img src="{{ post.picture.url }}" style="height: 130px; width:130px;"/>
             {% endif %}
        </div>
-       <div class="col-6">
+       <div class="col-10">
             <h5><a href="{% url 'show_post' post.slug %}">{{post.title}}</a></h5>
+            <small>Category : <a href="{% url 'show_category' post.category %}">{{ post.category }}</small><br/>
             <small>created : {{ post.post_date|date:"Y-m-d" }}</small><br/>
             <small>edited : {{ post.update_date|date:"Y-m-d" }}</small><br/>
             {% if user.is_authenticated %}
               <small><a href="{% url 'edit_post' post.slug %}">(Edit)</a></small>
               <small><a href="{% url 'delete_post' post.slug %}">(Delete)</a></small>
             {% endif %}
-            <p>{{ post.body|safe|slice:":250"}}</p>
+            <p>{{ post.body|safe|slice:":360"}}</p>
        </div>
     </div>
     {% endfor %}
