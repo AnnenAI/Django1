@@ -8,8 +8,10 @@
     <h3>{{post.title}}</h3>
     <small>created : {{ post.post_date }}</small><br/>
     <small>edited : {{ post.update_date }}</small><br/>
-    <small><a href="{% url 'edit_post' post.slug %}">(Edit)</a></small>
-    <small><a href="{% url 'delete_post' post.slug %}">(Delete)</a></small>
+    {% if user.is_authenticated %}
+      <small><a href="{% url 'edit_post' post.slug %}">(Edit)</a></small>
+      <small><a href="{% url 'delete_post' post.slug %}">(Delete)</a></small>
+    {% endif %}
     {{post.body|safe|linebreaks}}
 <button type="button" class="btn btn-light"><a href="{% url 'show_blog' %}">Back to blog</a></button>
 {% endblock %}

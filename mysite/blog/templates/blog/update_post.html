@@ -5,6 +5,7 @@ Updating post
 {% endblock %}
 
 {% block content %}
+{% if user.is_authenticated %}
   <h5>Edit: {{post.title}} </h5>
   <form method="POST" enctype="multipart/form-data">
      <div class="col-7">
@@ -16,7 +17,9 @@ Updating post
           </div>
     </div>
   </form>
-
+{% else %}
+  <h2 align="center">Locked</h2>
+{% endif %}
   <script type="text/javascript" src="/static/admin/js/urlify.js"></script>
 
   <script type="text/javascript">

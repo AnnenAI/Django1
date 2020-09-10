@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'main',
+    'members',
     'blog',
     'ckeditor',
     'django.contrib.admin',
@@ -125,6 +126,9 @@ STATIC_URL = '/static/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT= os.path.join(BASE_DIR, 'media')
+
+LOGIN_REDIRECT_URL='index'
+LOGOUT_REDIRECT_URL='index'
 
 STATICFILES_DIRS=(
     os.path.join(BASE_DIR,'static'),

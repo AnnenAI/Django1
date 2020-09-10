@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block content %}
+{% if user.is_authenticated %}
   <h1>Add Post</h1>
   <form method="POST" enctype="multipart/form-data">
       <div class="col-7">
@@ -16,7 +17,9 @@
           </div>
       </div>
   </form>
-
+{% else %}
+  <h2 align="center">Locked</h2>
+{% endif %}
   <script type="text/javascript" src="/static/admin/js/urlify.js"></script>
 
   <script type="text/javascript">

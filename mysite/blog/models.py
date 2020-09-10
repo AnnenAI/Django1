@@ -8,11 +8,11 @@ from django.urls import reverse
 class Post(models.Model):
     title = models.CharField(max_length=200)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    slug = models.SlugField(max_length=250, blank=True)
+    slug = models.SlugField(max_length=250)
     body = RichTextField()
     post_date = models.DateTimeField(default=datetime.now)
     update_date = models.DateTimeField(default=datetime.now)
-    picture = models.ImageField(upload_to='posts/', null=True)
+    picture = models.ImageField(upload_to='posts/', null=True, blank=True)
 
     def __str__(self):
         return self.title + ' | '+str(self.author)

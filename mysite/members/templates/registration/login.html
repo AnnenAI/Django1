@@ -1,22 +1,18 @@
 {% extends 'main/wrapper.html'%}
 
 {% block title %}
-Delete post
+  Login
 {% endblock %}
 
 {% block content %}
-{% if user.is_authenticated %}
-  <h3>Delete: {{post.title}}</h3>
+  <h1>Login</h1>
   <form method="POST" enctype="multipart/form-data">
       <div class="col-7">
           <div class="form-group">
               {% csrf_token %}
-              <strong>Are you sure?</strong><br/><br/>
-              <button class="btn btn-danger">Delete</button>
+              {{ form.as_p }}
+              <button class="btn btn-success">Login</button>
           </div>
       </div>
   </form>
-{% else %}
-  <h2 align="center">Locked</h2>
-{% endif %}
 {% endblock %}

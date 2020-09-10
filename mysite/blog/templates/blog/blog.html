@@ -29,8 +29,11 @@
             <h5><a href="{% url 'show_post' post.slug %}">{{post.title}}</a></h5>
             <small>created : {{ post.post_date|date:"Y-m-d" }}</small><br/>
             <small>edited : {{ post.update_date|date:"Y-m-d" }}</small><br/>
-            <small><a href="{% url 'edit_post' post.slug %}">(Edit)</a></small>
-            <small><a href="{% url 'delete_post' post.slug %}">(Delete)</a></small>
+            {% if user.is_authenticated %}
+              <small><a href="{% url 'edit_post' post.slug %}">(Edit)</a></small>
+              <small><a href="{% url 'delete_post' post.slug %}">(Delete)</a></small>
+            {% endif %}
+            <p>{{ post.body|safe|slice:":250"}}</p>
        </div>
     </div>
     {% endfor %}

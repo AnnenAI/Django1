@@ -24,7 +24,11 @@
 	  		<div class="img bg-wrap text-center py-4" style="background-image: url({% static 'main/images/bg_1.jpg' %});">
 	  			<div class="user-logo">
 	  				<div class="img" style="background-image: url({% static 'main/images/logo.jpg' %})"></div>
-	  				<h3>AnnenAI</h3>
+            {% if user.username %}
+              <h3>{{user.username}}</h3>
+            {% else %}
+              <h3>Guest</h3>
+            {% endif %}
 	  			</div>
 	  		</div>
         <ul class="list-unstyled components mb-5">
@@ -37,9 +41,23 @@
           <li>
             <a href="{% url 'show_blog' %}"><span class="fa fa-pencil-square mr-3"></span>Blog</a>
           </li>
-          <li>
-            <a href="{% url 'add_post' %}"><span class="fa fa-pencil-square mr-3"></span>Add new post</a>
-          </li>
+
+          {% if user.is_authenticated %}
+              <li>
+                <a href="{% url 'add_post' %}"><span class="fa fa-pencil-square mr-3"></span>Add new post</a>
+              </li>
+              <li>
+                <a href="{% url 'logout' %}"><span class="fa fa-pencil-square mr-3"></span>LogOut</a>
+              </li>
+          {% else %}
+              <li>
+                <a href="{% url 'register' %}"><span class="fa fa-pencil-square mr-3"></span>Register</a>
+              </li>
+              <li>
+                <a href="{% url 'login' %}"><span class="fa fa-pencil-square mr-3"></span>Login</a>
+              </li>
+          {% endif %}
+
     	</nav>
 
         <!-- Page Content  -->
