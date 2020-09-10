@@ -76,9 +76,9 @@ class SearchList(ListView):
     def get_queryset(self):
         query = self.request.GET.get('q')
         if query:
-            return self.model.objects.filter(Q(title__icontains=query)|Q(body__icontains=query)).distinct()
+            return self.Post.objects.filter(Q(title__icontains=query)|Q(body__icontains=query)).distinct()
         else:
-            return self.model.objects.all()
+            return self.Post.objects.all()
 
 def search_post(request):
     template='blog/blog.html'

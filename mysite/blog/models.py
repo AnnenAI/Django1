@@ -2,13 +2,14 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import pre_save
 from datetime import datetime
+from ckeditor.fields import RichTextField
 from django.urls import reverse
 
 class Post(models.Model):
     title = models.CharField(max_length=200)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     slug = models.SlugField(max_length=250, blank=True)
-    body = models.TextField()
+    body = RichTextField()
     post_date = models.DateTimeField(default=datetime.now)
     update_date = models.DateTimeField(default=datetime.now)
     picture = models.ImageField(upload_to='posts/', null=True)
@@ -23,12 +24,12 @@ class Post(models.Model):
             return reverse('show_blog')
 
 def check_unique_slug(sender,instance,*args,**kwards):
-    slugs=list(Post.objects.values_list('slug',flat=True))
+    slugs = dict(Post.objects.values_list('slug','id'))
     unique=False
     verifiable_slug=instance.slug
     iter=1
     while(not unique):
-        if verifiable_slug in slugs:
+        if verifiable_slug in slugs and instance.id != slugs[verifiable_slug]:
             verifiable_slug=instance.slug+'-'+str(iter)
             iter+=1
         else:

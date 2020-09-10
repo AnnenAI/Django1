@@ -10,7 +10,7 @@ class AddForm(forms.ModelForm):
             'title':forms.TextInput(attrs={'class':'form-control border border-primary'}),
             'author':forms.Select(attrs={'class':'form-control border border-primary'}),
             'slug':forms.TextInput(attrs={'class':'form-control border border-primary'}),
-            'body':forms.Textarea(attrs={'class':'form-control border border-primary'}),
+            'body':forms.Textarea(attrs={'class':'form-control'}),
             'picture':forms.FileInput(attrs={'class':'form-control-file py-2 border'}),
         }
 
@@ -22,7 +22,7 @@ class EditForm(forms.ModelForm):
         widgets = {
             'title':forms.TextInput(attrs={'class':'form-control border border-primary'}),
             'slug':forms.TextInput(attrs={'class':'form-control border border-primary'}),
-            'body':forms.Textarea(attrs={'class':'form-control border border-primary','rows':'30'}),
+            'body':forms.Textarea(attrs={'class':'form-control'}),
             'update_date':forms.HiddenInput(),
             'picture':forms.FileInput(attrs={'class':'form-control-file py-2 border'}),
         }
