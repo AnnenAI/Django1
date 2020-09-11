@@ -8,7 +8,7 @@ class AddForm(forms.ModelForm):
 
         widgets = {
             'title':forms.TextInput(attrs={'class':'form-control border border-primary'}),
-            'author':forms.Select(attrs={'class':'form-control border border-primary'}),
+            'author':forms.HiddenInput(attrs={'class':'form-control border border-primary','id':'author'}),
             'category':forms.Select(attrs={'class':'form-control border border-primary'}),
             'slug':forms.TextInput(attrs={'class':'form-control border border-primary'}),
             'body':forms.Textarea(attrs={'class':'form-control'}),

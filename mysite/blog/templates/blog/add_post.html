@@ -20,6 +20,14 @@
 {% else %}
   <h2 align="center">Locked</h2>
 {% endif %}
+
+  <script type="text/javascript">
+    window.onload = function() {
+      var name = document.getElementById("author");
+      name.value  = "{{ user.id }}";
+    };
+  </script>
+
   <script type="text/javascript" src="/static/admin/js/urlify.js"></script>
 
   <script type="text/javascript">
