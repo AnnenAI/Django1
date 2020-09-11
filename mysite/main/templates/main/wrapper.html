@@ -41,7 +41,9 @@
           <li>
             <a href="{% url 'show_blog' %}"><span class="fa fa-pencil-square mr-3"></span>Blog</a>
           </li>
-
+          <li>
+            <a href="{% url 'categories_list' %}"><span class="fa fa-pencil-square mr-3"></span>Categories</a>
+          </li>
           {% if user.is_authenticated %}
               <li>
                 <a href="{% url 'add_post' %}"><span class="fa fa-pencil-square mr-3"></span>Add new post</a>
@@ -57,7 +59,7 @@
                 <a href="{% url 'register' %}"><span class="fa fa-pencil-square mr-3"></span>Register</a>
               </li>
               <li>
-                <a href="{% url 'login' %}"><span class="fa fa-pencil-square mr-3"></span>Login</a>
+                <a href="{% url 'login' %}"><span class="fa fa-pencil-square mr-3"></span>LogIn</a>
               </li>
           {% endif %}
 
@@ -69,6 +71,7 @@
             {% endblock %}
       </div>
     </div>
+
     <script src="{% static 'main/js/jquery.min.js' %}"></script>
     <script src="{% static 'main/js/popper.js' %}"></script>
     <script src="{% static 'main/js/bootstrap.min.js' %}"></script>

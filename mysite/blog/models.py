@@ -6,7 +6,7 @@ from ckeditor.fields import RichTextField
 from django.urls import reverse
 
 class Category(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200,default='General')
 
     def __str__(self):
         return self.name
@@ -19,7 +19,7 @@ class Post(models.Model):
     title = models.CharField(max_length=200)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     slug = models.SlugField(max_length=250)
-    category=models.CharField(max_length=200,default='general')
+    category=models.ForeignKey(Category, on_delete=models.CASCADE)
     body = RichTextField()
     post_date = models.DateTimeField(default=datetime.now)
     update_date = models.DateTimeField(default=datetime.now)

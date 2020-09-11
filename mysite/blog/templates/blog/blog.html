@@ -17,7 +17,7 @@
         </div>
 
   </form>
-  <h3>Количество постов: {{page_obj.end_index}} из {{page_obj.paginator.count}}</h3>
+  <h3>Count posts: {{page_obj.end_index}} of {{page_obj.paginator.count}}</h3>
     {% for post in post_list %}
     <div class="row p-3 mb-2 bg-light text-dark">
         <div class="col-2">
@@ -25,16 +25,16 @@
                 <img src="{{ post.picture.url }}" style="height: 130px; width:130px;"/>
             {% endif %}
        </div>
-       <div class="col-10">
+       <div class="col">
             <h5><a href="{% url 'show_post' post.slug %}">{{post.title}}</a></h5>
-            <small>Category : <a href="{% url 'show_category' post.category %}">{{ post.category }}</small><br/>
+            <small>Category : <a href="{% url 'show_category' post.category|slugify %}">{{ post.category }}</small><br/>
             <small>created : {{ post.post_date|date:"Y-m-d" }}</small><br/>
             <small>edited : {{ post.update_date|date:"Y-m-d" }}</small><br/>
             {% if user.is_authenticated %}
               <small><a href="{% url 'edit_post' post.slug %}">(Edit)</a></small>
               <small><a href="{% url 'delete_post' post.slug %}">(Delete)</a></small>
             {% endif %}
-            <p>{{ post.body|safe|slice:":360"}}</p>
+            <p>{{ post.body|safe|slice:":350"}}</p>
        </div>
     </div>
     {% endfor %}

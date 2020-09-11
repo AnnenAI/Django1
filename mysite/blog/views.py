@@ -8,11 +8,39 @@ from django.db.models import Q
 from django.urls import reverse_lazy
 from .forms import EditForm, AddForm
 
+class CategoryView(ListView):
+    model=Category
+    template_name="blog/show_category.html"
+
+    def get_context_data(self,*args,**kwards):
+        category=self.kwargs['category'].replace('-',' ')
+        context=super(CategoryView,self).get_context_data(*args,**kwards)
+        context = {
+            'category':category.title,
+            'post_list':Post.objects.filter(category__name__iexact=category),
+        }
+        return context
+
+class CategoriesListView(ListView):
+    model=Category
+    template_name="blog/categories.html"
+    context_object_name = 'categories'
+
+    def get_queryset(self):
+        categories=Category.objects.all()
+        return categories
+
 class PostListView(ListView):
     queryset = Post.objects.all()
     template_name = 'blog/blog.html'
     paginate_by = 5
     context_object_name = 'post_list'
+
+    def get_context_data(self,*args,**kwards):
+        categories=Category.objects.all()
+        context=super(PostListView,self).get_context_data(*args,**kwards)
+        context["categories"]=categories
+        return context
 
 class AddPostView(CreateView):
     model=Post
@@ -29,12 +57,6 @@ class UpdatePostView(UpdateView):
     form_class=EditForm
     template_name='blog/update_post.html'
 
-def Show_Category(request,category):
-    context = {
-        'category':category.title,
-        'post_list':Post.objects.filter(category=category)
-    }
-    return render(request,'blog/show_category.html',context)
 
 class DeletePostView(DeleteView):
     model=Post
