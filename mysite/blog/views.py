@@ -126,12 +126,12 @@ class SearchListView(ListView):
         context['author']=User.objects.get(pk=user)
         return context
 
-    def get_queryset(self):
-        query = self.request.GET.get('q')
-        if query:
-            return Post.objects.filter((Q(title__icontains=query)|Q(body__icontains=query))&Q(author=self.request.user)).distinct()
-        else:
-            return Post.objects.filter(author=self.request.user)
+#    def get_queryset(self):
+#        query = self.request.GET.get('q')
+#        if query:
+#            return Post.objects.filter((Q(title__icontains=query)|Q(body__icontains=query))&Q(author=self.request.user)).distinct()
+#        else:
+#            return Post.objects.filter(author=self.request.user)
 
 """
 def show_blog(request):

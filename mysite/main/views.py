@@ -24,6 +24,26 @@ class AllPostListView(ListView):
         context['nbar']='home'
         return context
 
+class FindUserView(ListView):
+    model=Post
+    template_name = 'main/users.html'
+    paginate_by=3
+
+    def get_context_data(self,*args,**kwards):
+        query = self.request.GET.get('q')
+        if query:
+            users=Post.objects.filter(author__username__icontains=query).values('author','author__username').annotate(count=Count('author'),
+            categories = Concat('category__name')).order_by('-count')
+        else:
+            users=Post.objects.values('author','author__username').annotate(count=Count('author'),
+            categories = Concat('category__name')).order_by('-count')
+        context=super(FindUserView,self).get_context_data(*args,**kwards)
+        p = Paginator(users, self.paginate_by)
+        users=unique_list(users)
+        context['page_obj']=p.page(context['page_obj'].number)
+        context['nbar']='users'
+        return context
+
 class AllUsersView(ListView):
     model=Post
     template_name = 'main/users.html'
