@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.db.models import Q
 from django.urls import reverse_lazy
 from .forms import EditForm, AddForm
+from django import http
 
 class CategoryView(ListView):
     model=Category
@@ -31,16 +32,14 @@ class CategoriesListView(ListView):
         return categories
 
 class PostListView(ListView):
-    queryset = Post.objects.all()
+    model=Post
     template_name = 'blog/blog.html'
-    paginate_by = 5
+    paginate_by = 3
     context_object_name = 'post_list'
 
-    def get_context_data(self,*args,**kwards):
-        categories=Category.objects.all()
-        context=super(PostListView,self).get_context_data(*args,**kwards)
-        context["categories"]=categories
-        return context
+    def get_queryset(self):
+        user = self.kwargs['user_id']
+        return Post.objects.filter(author=user)
 
 class AddPostView(CreateView):
     model=Post
@@ -57,34 +56,41 @@ class UpdatePostView(UpdateView):
     form_class=EditForm
     template_name='blog/update_post.html'
 
-
 class DeletePostView(DeleteView):
     model=Post
     template_name='blog/delete_post.html'
-    success_url=reverse_lazy('show_blog')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url=reverse_lazy('show_blog',kwargs={'user_id': request.user.id})
+        self.object.delete()
+        return http.HttpResponseRedirect(success_url)
+
 
 class PostDetailView(DetailView):
     model = Post
     template_name = 'blog/post.html'
     context_object_name = 'post'
+    success_url=reverse_lazy('home')
 
     def get_queryset(self):
-        self.slug_text = self.kwargs['slug']
-        return Post.objects.filter(slug=self.slug_text)
+        slug_text = self.kwargs['slug']
+        return Post.objects.filter(slug=slug_text)
 
 class SearchListView(ListView):
     model=Post
     template_name = 'blog/blog.html'
-    paginate_by = 5
+    paginate_by = 3
     context_object_name = 'post_list'
 
     def get_queryset(self):
         query = self.request.GET.get('q')
         if query:
-            return Post.objects.filter(Q(title__icontains=query)|Q(body__icontains=query)).distinct()
+            return Post.objects.filter((Q(title__icontains=query)|Q(body__icontains=query))&Q(author=self.request.user)).distinct()
         else:
-            return Post.objects.all()
+            return Post.objects.filter(author=self.request.user)
 
+"""
 def show_blog(request):
     template='blog/blog.html'
     posts=Post.objects.all()[:25]
@@ -131,3 +137,4 @@ def search_post(request):
         'post_list': post_list
     }
     return render(request,template,context)
+"""

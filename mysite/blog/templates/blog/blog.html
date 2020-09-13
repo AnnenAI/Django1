@@ -27,10 +27,11 @@
        </div>
        <div class="col">
             <h5><a href="{% url 'show_post' post.slug %}">{{post.title}}</a></h5>
+            <small>created by <a href="{% url 'show_blog' post.author.id %}"> {{post.author.username}}</a></small><br/>
             <small>Category : <a href="{% url 'show_category' post.category|slugify %}">{{ post.category }}</small><br/>
             <small>created : {{ post.post_date|date:"Y-m-d" }}</small><br/>
             <small>edited : {{ post.update_date|date:"Y-m-d" }}</small><br/>
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and user.id is post.author.id %}
               <small><a href="{% url 'edit_post' post.slug %}">(Edit)</a></small>
               <small><a href="{% url 'delete_post' post.slug %}">(Delete)</a></small>
             {% endif %}

@@ -3,7 +3,7 @@
   <head>
   	<title>
       {% block title %}
-          BLogg
+          This is Blog
       {% endblock %}
     </title>
     <meta charset="utf-8">
@@ -32,23 +32,23 @@
 	  			</div>
 	  		</div>
         <ul class="list-unstyled components mb-5">
-          <li class="active">
-            <a href="{% url 'index' %}"><span class="fa fa-home mr-3"></span> Home</a>
+          <li class="{% if nbar == 'home' %}active{% endif %}">
+            <a href="{% url 'home' %}"><span class="fa fa-home mr-3"></span> Home</a>
           </li>
-          <li>
+          <li class="{% if nbar == 'contact' %}active{% endif %}">
             <a href="{% url 'contact' %}"><span class="fa fa-address-book-o mr-3"></span> Contact</a>
           </li>
-          <li>
-            <a href="{% url 'show_blog' %}"><span class="fa fa-pencil-square mr-3"></span>Blog</a>
-          </li>
-          <li>
+          <li class="{% if nbar == 'category' %}active{% endif %}">
             <a href="{% url 'categories_list' %}"><span class="fa fa-pencil-square mr-3"></span>Categories</a>
           </li>
           {% if user.is_authenticated %}
-              <li>
+              <li class="{% if nbar == 'blog' %}active{% endif %}">
+                <a href="{% url 'show_blog' user.id %}"><span class="fa fa-pencil-square mr-3"></span>Blog</a>
+              </li>
+              <li class="{% if nbar == 'add_post' %}active{% endif %}">
                 <a href="{% url 'add_post' %}"><span class="fa fa-pencil-square mr-3"></span>Add new post</a>
               </li>
-              <li>
+              <li class="{% if nbar == 'add_category' %}active{% endif %}">
                 <a href="{% url 'add_category' %}"><span class="fa fa-pencil-square mr-3"></span>Add new category</a>
               </li>
               <li>
@@ -57,7 +57,7 @@
           {% else %}
               <li>
                 <a href="{% url 'register' %}"><span class="fa fa-pencil-square mr-3"></span>Register</a>
-              </li>
+              </li class="{% if nbar == 'login' %}active{% endif %}">
               <li>
                 <a href="{% url 'login' %}"><span class="fa fa-pencil-square mr-3"></span>LogIn</a>
               </li>

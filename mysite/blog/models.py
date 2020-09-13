@@ -12,7 +12,7 @@ class Category(models.Model):
         return self.name
 
     def get_absolute_url(self):
-            return reverse('index')
+            return reverse('home')
 
 
 class Post(models.Model):
@@ -32,7 +32,7 @@ class Post(models.Model):
         ordering = ["-post_date"]
 
     def get_absolute_url(self):
-            return reverse('show_blog')
+            return reverse('show_blog',kwargs={'user_id': self.author.id})
 
 def check_unique_slug(sender,instance,*args,**kwards):
     slugs = dict(Post.objects.values_list('slug','id'))

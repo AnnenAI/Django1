@@ -1,5 +1,47 @@
 {%extends "main/wrapper.html" %}
-  {% block content %}
-  <h2><strong>The Struggles of Our Life</strong></h2>
-  <p>Once upon a time a daughter complained to her father that her life was miserable and that she didn’t know how she was going to make it.</p><p>She was tired of fighting and struggling all the time. It seemed just as one problem was solved, another one soon followed.</p><p>Her father, a chef, took her to the kitchen. He filled three pots with water and placed each on a high fire.</p><p>Once the three pots began to boil, he placed potatoes in one pot, eggs in the second pot and ground coffee beans in the third pot. He then let them sit and boil, without saying a word to his daughter.</p><p>The daughter, moaned and impatiently waited, wondering what he was doing. After twenty minutes he turned off the burners.</p><p>He took the potatoes out of the pot and placed them in a bowl. He pulled the eggs out and placed them in a bowl. He then ladled the coffee out and placed it in a cup.</p><p>&nbsp;</p><p>Turning to her, he asked. <strong><em>“Daughter, what do you see?”</em></strong></p><p><strong><em>“Potatoes, eggs and coffee,”</em></strong> she hastily replied.</p><p><em><strong>“Look closer”</strong></em>&nbsp;he said, <strong><em>“and touch the potatoes.”</em></strong> She did and noted that they were soft.</p><p>He then asked her to take an egg and break it. After pulling off the shell, she observed the hard-boiled egg.</p><p>Finally, he asked her to sip the coffee. Its rich aroma brought a smile to her face.</p><p><strong><em>“Father, what does this mean?”</em></strong> she asked.</p><p>&nbsp;</p><p>He then explained that the potatoes, the eggs and coffee beans had each faced the same adversity-the boiling water. However, each one reacted differently. The potato went in strong, hard and unrelenting, but in boiling water, it became soft and weak.</p> <p>The egg was fragile, with the thin outer shell protecting its liquid interior until it was put in the boiling water. Then the inside of the egg became hard.</p><p>However, the ground coffee beans were unique. After they were exposed to the boiling water, they changed the water and created something new.</p><p><strong><em>“Which one are you?”</em></strong> he asked his daughter.</p><p>&nbsp;</p><blockquote><p style="text-align: center;"><strong>“When adversity knocks on your door, how do you respond? Are you a potato, an egg, or a coffee bean?”</strong></p></blockquote><p>&nbsp;</p>
+  {% block title %}
+    All Posts
   {% endblock %}
+
+  {% block content %}
+  <form method="GET" action="{% url 'search_results_all_posts' %}">
+        <div class="form-row">
+            <div class="form-group col-12">
+                <div class="input-group">
+                    <input class="form-control py-2 border-right-0 border" type="search" name="q" placeholder="Search..." />
+                    <span class="input-group-append">
+                        <div class="input-group-text bg-transparent">
+                            <i class="fa fa-search"></i>
+                        </div>
+                    </span>
+                    <button type="submit"  class="btn btn-primary ml-2">Search</button>
+                </div>
+            </div>
+        </div>
+
+  </form>
+    <h3>Count posts: {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }}.</h3>
+    {% for post in page_obj %}
+    <div class="row p-3 mb-2 bg-light text-dark">
+        <div class="col-2">
+            {% if post.picture %}
+                <img src="{{ post.picture.url }}" style="height: 130px; width:130px;"/>
+            {% endif %}
+       </div>
+       <div class="col">
+            <h5><a href="{% url 'show_post' post.slug %}">{{post.title}}</a></h5>
+            <small>created by <a href="{% url 'show_blog' post.author.id %}"> {{post.author.username}}</a></small><br/>
+            <small>Category : <a href="{% url 'show_category' post.category|slugify %}">{{ post.category }}</a></small><br/>
+            <small>created : {{ post.post_date|date:"Y-m-d" }}</small><br/>
+            <small>edited : {{ post.update_date|date:"Y-m-d" }}</small><br/>
+            {% if user.is_authenticated and user.id is post.author.id %}
+              <small><a href="{% url 'edit_post' post.slug %}">(Edit)</a></small>
+              <small><a href="{% url 'delete_post' post.slug %}">(Delete)</a></small>
+            {% endif %}
+            <p>{{ post.body|safe|slice:":350"}}</p>
+       </div>
+    </div>
+    {% endfor %}
+
+    {% include 'blog/_pagination.html'%}
+{% endblock %}

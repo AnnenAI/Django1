@@ -1,11 +1,11 @@
 
 {% if is_paginated %}
-  <nav aria-label="Page navigation conatiner"></nav>
+  <nav aria-label="Page navigation conatiner">
   <ul class="pagination justify-content-center">
     {% if page_obj.has_previous %}
     <li class="page-item"><a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="page-link">&laquo; PREV </a></li>
     {% endif %}
-    {% for i in paginator.page_range %}
+    {% for i in page_obj.paginator.page_range %}
     {% if page_obj.number == i %}
       <li class="page-item active"><a class="page-link" href="#">{{i}}<span class="sr-only">(current)</span></a></li>
     {% else %}
@@ -17,13 +17,12 @@
     {% endif %}
   </ul>
   </nav>
-</div>
 {% endif %}
 
 
 <!--
 {% if post_list.has_other_pages %}
-  <nav aria-label="Page navigation conatiner"></nav>
+  <nav aria-label="Page navigation conatiner">
   <ul class="pagination justify-content-center">
     {% if post_list.has_previous %}
     <li><a href="?page={{ post_list.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="page-link">&laquo; PREV </a></li>
@@ -33,6 +32,5 @@
    {% endif %}
   </ul>
   </nav>
-</div>
 {% endif %}
 -->
