@@ -1,0 +1,40 @@
+{%extends "main/wrapper.html" %}
+  {% block title %}
+    Users
+  {% endblock %}
+
+  {% block content %}
+  <h3 align="center">All users</h3>
+  <form method="GET" action="">
+        <div class="form-row">
+            <div class="form-group col-12">
+                <div class="input-group">
+                    <input class="form-control py-2 border-right-0 border" type="search" name="q" placeholder="Find user" />
+                    <span class="input-group-append">
+                        <div class="input-group-text bg-transparent">
+                            <i class="fa fa-search"></i>
+                        </div>
+                    </span>
+                    <button type="submit"  class="btn btn-primary ml-2">Search</button>
+                </div>
+            </div>
+        </div>
+
+  </form>
+    <h3>Count posts: {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }}.</h3>
+    {% for member in page_obj %}
+    <div class="row p-3 mb-2 bg-light text-dark">
+        <div class="col-2">
+            <h5><a href="{% url 'show_blog' member.author %}">{{member.author__username}}</a></h5>
+       </div>
+       <div class="col">
+         <h6>Categories: </h6>|
+         {% for category in member.categories %}
+           <small><a href="{% url 'show_category' category|slugify %}"> {{ category }}</a></small>|
+         {% endfor %}
+       </div>
+    </div>
+    {% endfor %}
+
+    {% include 'blog/_pagination.html'%}
+{% endblock %}

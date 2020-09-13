@@ -4,7 +4,7 @@ from .views import PostListView,PostDetailView,SearchListView,AddPostView,Update
 urlpatterns=[
     path('users/<int:user_id>',PostListView.as_view(),name='show_blog'),
     path('article/<slug:slug>',PostDetailView.as_view(), name='show_post'),
-    path('search/', SearchListView.as_view(), name='search_results'),
+    path('user/<int:user_id>/search/', SearchListView.as_view(), name='search_results'),
     path('add_post/', AddPostView.as_view(), name='add_post'),
     path('add_category/', AddCategoryView.as_view(), name='add_category'),
     path('category/<str:category>/', CategoryView.as_view(), name='show_category'),

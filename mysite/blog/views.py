@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from blog.models import Post, Category
+from blog.models import Post, Category, User
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView,DetailView, CreateView, UpdateView, DeleteView
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -25,31 +25,60 @@ class CategoryView(ListView):
 class CategoriesListView(ListView):
     model=Category
     template_name="blog/categories.html"
-    context_object_name = 'categories'
+    #context_object_name = 'categories'
 
-    def get_queryset(self):
+    def get_context_data(self,*args,**kwards):
         categories=Category.objects.all()
-        return categories
+        context=super(CategoriesListView,self).get_context_data(*args,**kwards)
+        context = {
+            'categories':categories,
+            'nbar':'categories',
+        }
+        return context
+    #def get_queryset(self):
+    #    categories=Category.objects.all()
+    #    return categories
 
 class PostListView(ListView):
     model=Post
     template_name = 'blog/blog.html'
     paginate_by = 3
-    context_object_name = 'post_list'
+    #context_object_name = 'post_list'
 
-    def get_queryset(self):
+    def get_context_data(self,*args,**kwards):
         user = self.kwargs['user_id']
-        return Post.objects.filter(author=user)
+        post_list=Post.objects.filter(author=user)
+        context=super(PostListView,self).get_context_data(*args,**kwards)
+        p = Paginator(post_list, self.paginate_by)
+        context['page_obj']=p.page(context['page_obj'].number)
+        context['nbar']='blog'
+        context['author']=User.objects.get(pk=user)
+        return context
+
+#   #def get_queryset(self):
+#        user = self.kwargs['user_id']
+#        return list(Post.objects.filter(author=user))
 
 class AddPostView(CreateView):
     model=Post
     form_class=AddForm
     template_name='blog/add_post.html'
 
+    def get_context_data(self,*args,**kwards):
+        context=super(AddPostView,self).get_context_data(*args,**kwards)
+        context['nbar']='add_post'
+        return context
+
+
 class AddCategoryView(CreateView):
     model=Category
     fields='__all__'
     template_name='blog/add_category.html'
+
+    def get_context_data(self,*args,**kwards):
+        context=super(AddCategoryView,self).get_context_data(*args,**kwards)
+        context['nbar']='add_category'
+        return context
 
 class UpdatePostView(UpdateView):
     model=Post
@@ -81,7 +110,21 @@ class SearchListView(ListView):
     model=Post
     template_name = 'blog/blog.html'
     paginate_by = 3
-    context_object_name = 'post_list'
+    #context_object_name = 'post_list'
+
+    def get_context_data(self,*args,**kwards):
+        user = self.kwargs['user_id']
+        query = self.request.GET.get('q')
+        if query:
+            post_list = Post.objects.filter((Q(title__icontains=query)|Q(body__icontains=query))&Q(author=user)).distinct()
+        else:
+            post_list = Post.objects.filter(author=user)
+        context=super(SearchListView,self).get_context_data(*args,**kwards)
+        p = Paginator(post_list, self.paginate_by)
+        context['page_obj']=p.page(context['page_obj'].number)
+        context['nbar']='blog'
+        context['author']=User.objects.get(pk=user)
+        return context
 
     def get_queryset(self):
         query = self.request.GET.get('q')

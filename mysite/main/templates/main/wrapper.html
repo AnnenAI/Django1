@@ -35,10 +35,10 @@
           <li class="{% if nbar == 'home' %}active{% endif %}">
             <a href="{% url 'home' %}"><span class="fa fa-home mr-3"></span> Home</a>
           </li>
-          <li class="{% if nbar == 'contact' %}active{% endif %}">
-            <a href="{% url 'contact' %}"><span class="fa fa-address-book-o mr-3"></span> Contact</a>
+          <li class="{% if nbar == 'users' %}active{% endif %}">
+            <a href="{% url 'all_users' %}"><span class="fa fa-address-book-o mr-3"></span> Users</a>
           </li>
-          <li class="{% if nbar == 'category' %}active{% endif %}">
+          <li class="{% if nbar == 'categories' %}active{% endif %}">
             <a href="{% url 'categories_list' %}"><span class="fa fa-pencil-square mr-3"></span>Categories</a>
           </li>
           {% if user.is_authenticated %}
