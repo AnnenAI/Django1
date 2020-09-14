@@ -15,4 +15,16 @@
     {% endif %}
     {{post.body|safe|linebreaks}}
       <button type="button" class="btn btn-light"><a href="{% url 'show_blog' post.author.id %}">Visit blog << {{post.author.username}} >></a></button>
+      <hr/>
+      <form action="{% url 'like_post' post.slug %}" method="POST">
+        {% if user.is_authenticated %}
+          {% csrf_token %}
+          {% if liked %}
+            <button type="submit" name="post_slug" value="{{post.slug}}" class="btn btn-light fa fa-heart"> UnLike</button>
+          {% else %}
+            <button type="submit" name="post_slug" value="{{post.slug}}" class="btn btn-light fa fa-heart-o"> Like</button>
+          {% endif %}
+        {% endif %}
+        Total likes: {{total_likes}}
+      </form>
 {% endblock %}

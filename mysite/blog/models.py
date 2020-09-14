@@ -24,6 +24,10 @@ class Post(models.Model):
     post_date = models.DateTimeField(default=datetime.now)
     update_date = models.DateTimeField(default=datetime.now)
     picture = models.ImageField(upload_to='posts/', null=True, blank=True)
+    likes = models.ManyToManyField(User,related_name='blog_post')
+
+    def total_likes(self):
+        return self.likes.count()
 
     def __str__(self):
         return self.title + ' | '+str(self.author)

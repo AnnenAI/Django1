@@ -5,7 +5,7 @@ from django.views.generic import ListView,DetailView, CreateView, UpdateView, De
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponse
 from django.db.models import Q
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy,reverse
 from .forms import EditForm, AddForm
 from django import http
 
@@ -59,6 +59,15 @@ class PostListView(ListView):
 #        user = self.kwargs['user_id']
 #        return list(Post.objects.filter(author=user))
 
+def LikeView(request,slug):
+    post=get_object_or_404(Post, slug=request.POST.get('post_slug'))
+    user=request.user
+    if post.likes.filter(id=user.id).exists():
+        post.likes.remove(user)
+    else:
+        post.likes.add(user)
+    return http.HttpResponseRedirect(reverse('show_post',args=[str(slug)]))
+
 class AddPostView(CreateView):
     model=Post
     form_class=AddForm
@@ -99,12 +108,18 @@ class DeletePostView(DeleteView):
 class PostDetailView(DetailView):
     model = Post
     template_name = 'blog/post.html'
-    context_object_name = 'post'
-    success_url=reverse_lazy('home')
 
-    def get_queryset(self):
+    def get_context_data(self,*args,**kwards):
+        context=super(PostDetailView,self).get_context_data(*args,**kwards)
         slug_text = self.kwargs['slug']
-        return Post.objects.filter(slug=slug_text)
+        context['post']=Post.objects.filter(slug=slug_text)[0]
+        stuff =get_object_or_404(Post, slug=slug_text)
+        liked=False
+        if stuff.likes.filter(id=self.request.user.id).exists():
+            liked=True
+        context['total_likes']=stuff.total_likes()
+        context['liked']=liked
+        return context
 
 class SearchListView(ListView):
     model=Post

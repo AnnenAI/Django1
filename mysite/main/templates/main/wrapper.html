@@ -36,30 +36,30 @@
             <a href="{% url 'home' %}"><span class="fa fa-home mr-3"></span> Home</a>
           </li>
           <li class="{% if nbar == 'users' %}active{% endif %}">
-            <a href="{% url 'all_users' %}"><span class="fa fa-address-book-o mr-3"></span> Users</a>
+            <a href="{% url 'all_users' %}"><span class="fa fa-users mr-3"></span> Users</a>
           </li>
           <li class="{% if nbar == 'categories' %}active{% endif %}">
-            <a href="{% url 'categories_list' %}"><span class="fa fa-pencil-square mr-3"></span>Categories</a>
+            <a href="{% url 'categories_list' %}"><span class="fa fa-object-group mr-3"></span>Categories</a>
           </li>
           {% if user.is_authenticated %}
               <li class="{% if nbar == 'blog' %}active{% endif %}">
                 <a href="{% url 'show_blog' user.id %}"><span class="fa fa-pencil-square mr-3"></span>Blog</a>
               </li>
               <li class="{% if nbar == 'add_post' %}active{% endif %}">
-                <a href="{% url 'add_post' %}"><span class="fa fa-pencil-square mr-3"></span>Add new post</a>
+                <a href="{% url 'add_post' %}"><span class="fa fa-plus-square  mr-3"></span>Add new post</a>
               </li>
               <li class="{% if nbar == 'add_category' %}active{% endif %}">
-                <a href="{% url 'add_category' %}"><span class="fa fa-pencil-square mr-3"></span>Add new category</a>
+                <a href="{% url 'add_category' %}"><span class="fa fa-plus-square-o  mr-3"></span>Add new category</a>
               </li>
               <li>
-                <a href="{% url 'logout' %}"><span class="fa fa-pencil-square mr-3"></span>LogOut</a>
+                <a href="{% url 'logout' %}"><span class="fa fa-sign-out mr-3"></span>LogOut</a>
               </li>
           {% else %}
               <li>
-                <a href="{% url 'register' %}"><span class="fa fa-pencil-square mr-3"></span>Register</a>
+                <a href="{% url 'register' %}"><span class="fa fa-user-plus mr-3"></span>Register</a>
               </li class="{% if nbar == 'login' %}active{% endif %}">
               <li>
-                <a href="{% url 'login' %}"><span class="fa fa-pencil-square mr-3"></span>LogIn</a>
+                <a href="{% url 'login' %}"><span class="fa fa-sign-in mr-3"></span>LogIn</a>
               </li>
           {% endif %}
 
