@@ -14,11 +14,12 @@ class CategoryView(ListView):
     template_name="blog/show_category.html"
 
     def get_context_data(self,*args,**kwards):
-        category=self.kwargs['category'].replace('-',' ')
+        category=Category.objects.get(slug=self.kwargs['category'])
+        print(category)
         context=super(CategoryView,self).get_context_data(*args,**kwards)
         context = {
-            'category':category.title,
-            'post_list':Post.objects.filter(category__name__iexact=category),
+            'category':category.name.title,
+            'post_list':Post.objects.filter(category__slug=category.slug),
         }
         return context
 

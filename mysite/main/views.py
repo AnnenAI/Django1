@@ -32,14 +32,14 @@ class FindUserView(ListView):
     def get_context_data(self,*args,**kwards):
         query = self.request.GET.get('q')
         if query:
-            users=Post.objects.filter(author__username__icontains=query).values('author','author__username').annotate(count=Count('author'),
-            categories = Concat('category__name')).order_by('-count')
+            users=Post.objects.filter(author__username__icontains=query).values('author','author__username').annotate(count=Count('author'),categories = Concat('category__name'),
+            categories_slug = Concat('category__slug')).order_by('-count')
         else:
-            users=Post.objects.values('author','author__username').annotate(count=Count('author'),
-            categories = Concat('category__name')).order_by('-count')
+            users=Post.objects.values('author','author__username').annotate(count=Count('author'),categories = Concat('category__name'),
+            categories_slug = Concat('category__slug')).order_by('-count')
         context=super(FindUserView,self).get_context_data(*args,**kwards)
         p = Paginator(users, self.paginate_by)
-        users=unique_list(users)
+        users=get_dict_category(users)
         context['page_obj']=p.page(context['page_obj'].number)
         context['nbar']='users'
         return context
@@ -50,22 +50,28 @@ class AllUsersView(ListView):
     paginate_by=3
 
     def get_context_data(self,*args,**kwards):
-        users=Post.objects.values('author','author__username').annotate(count=Count('author'),
-        categories = Concat('category__name')).order_by('-count')
+        users=Post.objects.prefetch_related('category')
+        users=Post.objects.values('author','author__username').annotate(count=Count('author'),categories = Concat('category__name'),
+        categories_slug = Concat('category__slug')).order_by('-count')
         context=super(AllUsersView,self).get_context_data(*args,**kwards)
         p = Paginator(users, self.paginate_by)
-        users=unique_list(users)
+        users=get_dict_category(users)
+        print(users)
         context['page_obj']=p.page(context['page_obj'].number)
         context['nbar']='users'
         return context
 
-def unique_list(users):
+def get_dict_category(users):
     for user in users:
         categories=user['categories'].split(',')
-        ulist = []
-        [ulist.append(category) for category in categories if category not in ulist]
-        user['categories']=ulist
-        user['count']=len(ulist)
+        categories_slug=user['categories_slug'].split(',')
+        name_list = []
+        [name_list.append(category) for category in categories if category not in name_list]
+        slug_list = []
+        [slug_list.append(category) for category in categories_slug if category not in slug_list]
+        dict = {name_list[i]: slug_list[i] for i in range(len(name_list))}
+        user['categories']=dict
+        user['count']=len(dict)
     return users
 
 class Concat(Aggregate):

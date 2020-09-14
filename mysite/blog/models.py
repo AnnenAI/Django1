@@ -6,7 +6,8 @@ from ckeditor.fields import RichTextField
 from django.urls import reverse
 
 class Category(models.Model):
-    name = models.CharField(max_length=200,default='General')
+    name = models.CharField(max_length=200,default='General',unique=True)
+    slug = models.SlugField(max_length=250,unique=True)
 
     def __str__(self):
         return self.name

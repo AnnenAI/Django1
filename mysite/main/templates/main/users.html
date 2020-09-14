@@ -29,8 +29,8 @@
        </div>
        <div class="col">
          <h6>Categories: </h6>|
-         {% for category in member.categories %}
-           <small><a href="{% url 'show_category' category|slugify %}"> {{ category }}</a></small>|
+         {% for category, slug in member.categories.items %}
+           <small><a href="{% url 'show_category' slug %}"> {{ category }}</a></small>|
          {% endfor %}
        </div>
     </div>
