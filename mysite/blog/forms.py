@@ -28,3 +28,13 @@ class EditForm(forms.ModelForm):
             'update_date':forms.HiddenInput(),
             'picture':forms.FileInput(attrs={'class':'form-control-file py-2 border'}),
         }
+
+class CategoryAddForm(forms.ModelForm):
+    class Meta:
+        model=Category
+        fields = ('name','slug')
+
+        widgets = {
+            'name':forms.TextInput(attrs={'class':'form-control border border-primary'}),
+            'slug':forms.TextInput(attrs={'class':'form-control border border-primary'}),
+        }

@@ -5,6 +5,13 @@
 
 
 {% block content %}
+<div class="row p-3 mb-2 bg-light text-dark">
+  {% if post.picture %}
+    <div class="col-2">
+      <img src="{{ post.picture.url }}" style="height: 150px; width:150px;"/>
+    </div>
+  {% endif %}
+  <div class="col">
     <h3>{{post.title}}</h3>
     <small>Category : <a href="{% url 'show_category' post.category.slug %}">{{ post.category }}</a></small><br/>
     <small>created : {{ post.post_date }}</small><br/>
@@ -13,18 +20,28 @@
       <small><a href="{% url 'edit_post' post.slug %}">(Edit)</a></small>
       <small><a href="{% url 'delete_post' post.slug %}">(Delete)</a></small>
     {% endif %}
-    {{post.body|safe|linebreaks}}
-      <button type="button" class="btn btn-light"><a href="{% url 'show_blog' post.author.id %}">Visit blog << {{post.author.username}} >></a></button>
-      <hr/>
-      <form action="{% url 'like_post' post.slug %}" method="POST">
-        {% if user.is_authenticated %}
-          {% csrf_token %}
-          {% if liked %}
-            <button type="submit" name="post_slug" value="{{post.slug}}" class="btn btn-light fa fa-heart"> UnLike</button>
-          {% else %}
-            <button type="submit" name="post_slug" value="{{post.slug}}" class="btn btn-light fa fa-heart-o"> Like</button>
-          {% endif %}
-        {% endif %}
-        Total likes: {{total_likes}}
-      </form>
+  </div>
+</div>
+<div class="row p-3 mb-2 bg-light text-dark">
+  {{post.body|safe|linebreaks}}
+</div>
+<div class="row p-3 mb-2 bg-light text-dark">
+  <button type="button" class="btn btn-light"><a href="{% url 'show_blog' post.author.id %}">
+    Back to blog
+    {{post.author.first_name}}
+    {{post.author.last_name}}
+</a></button>
+  <hr/>
+  <form action="{% url 'like_post' post.slug %}" method="POST">
+    {% if user.is_authenticated %}
+      {% csrf_token %}
+      {% if liked %}
+        <button type="submit" name="post_slug" value="{{post.slug}}" class="btn btn-light fa fa-heart"> UnLike</button>
+      {% else %}
+        <button type="submit" name="post_slug" value="{{post.slug}}" class="btn btn-light fa fa-heart-o"> Like</button>
+      {% endif %}
+    {% endif %}
+    Total likes: {{total_likes}}
+    </form>
+</div>
 {% endblock %}

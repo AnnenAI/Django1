@@ -10,7 +10,7 @@
     {% load static %}
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{%static 'main/css/style.css'%}">
   </head>
   <body style="background-image: url({% static 'main/images/bg_image.jpg' %})">
@@ -23,9 +23,13 @@
         </div>
 	  		<div class="img bg-wrap text-center py-4" style="background-image: url({% static 'main/images/bg_1.jpg' %});">
 	  			<div class="user-logo">
-	  				<div class="img" style="background-image: url({% static 'main/images/logo.jpg' %})"></div>
+            {% if  user.profile.picture %}
+              <div class="img" style="background-image: url('{{user.profile.picture.url}}'); height: 150px; width:150px;"></div>
+            {% else %}
+              <div class="img" style="background-image: url({% static 'main/images/guest.png' %}); height: 150px; width:150px;"></div>
+            {% endif %}
             {% if user.username %}
-              <h3>{{user.username}}</h3>
+              <h3>{{user.first_name}} {{user.last_name}}</h3>
             {% else %}
               <h3>Guest</h3>
             {% endif %}
@@ -42,23 +46,26 @@
             <a href="{% url 'categories_list' %}"><span class="fa fa-object-group mr-3"></span>Categories</a>
           </li>
           {% if user.is_authenticated %}
+              </li>
               <li class="{% if nbar == 'blog' %}active{% endif %}">
-                <a href="{% url 'show_blog' user.id %}"><span class="fa fa-pencil-square mr-3"></span>Blog</a>
+                <a href="{% url 'show_blog' user.id %}"><span class="fa fa-sticky-note-o mr-3"></span>Blog</a>
               </li>
               <li class="{% if nbar == 'add_post' %}active{% endif %}">
-                <a href="{% url 'add_post' %}"><span class="fa fa-plus-square  mr-3"></span>Add new post</a>
+                <a href="{% url 'add_post' %}"><span class="fa fa-pencil-square  mr-3"></span>Add new post</a>
               </li>
               <li class="{% if nbar == 'add_category' %}active{% endif %}">
                 <a href="{% url 'add_category' %}"><span class="fa fa-plus-square-o  mr-3"></span>Add new category</a>
+              </li>
+              <li class="{% if nbar == 'settings' %}active{% endif %}">
+                <a href="{% url 'edit_profile' %}"><span class="fa fa-cogs  mr-3"></span>Settings</a>
               </li>
               <li>
                 <a href="{% url 'logout' %}"><span class="fa fa-sign-out mr-3"></span>LogOut</a>
               </li>
           {% else %}
-              <li>
+              <li class="{% if nbar == 'register' %}active{% endif %}">
                 <a href="{% url 'register' %}"><span class="fa fa-user-plus mr-3"></span>Register</a>
-              </li class="{% if nbar == 'login' %}active{% endif %}">
-              <li>
+              <li class="{% if nbar == 'login' %}active{% endif %}">
                 <a href="{% url 'login' %}"><span class="fa fa-sign-in mr-3"></span>LogIn</a>
               </li>
           {% endif %}
@@ -69,9 +76,11 @@
       <div id="content" class="p-4 p-md-5 pt-5">
             {% block content %}
             {% endblock %}
+            {% if is_paginated %}
+              {% include 'blog/_pagination.html'%}
+            {% endif %}
       </div>
     </div>
-
     <script src="{% static 'main/js/jquery.min.js' %}"></script>
     <script src="{% static 'main/js/popper.js' %}"></script>
     <script src="{% static 'main/js/bootstrap.min.js' %}"></script>

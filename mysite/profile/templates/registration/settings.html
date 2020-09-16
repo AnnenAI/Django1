@@ -1,0 +1,22 @@
+{% extends 'main/wrapper.html' %}
+
+{% block title %}
+  Settings
+{% endblock %}
+
+
+{% block content %}
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link {% if nbarp == 'profile' %}active{% endif %}" href="{% url 'edit_profile' %}">Profile settings</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if nbarp == 'account' %}active{% endif %}" href="{% url 'edit_account' %}">Account settings</a>
+    </li>
+  </ul>
+  <hr/>
+  {% block profile %}
+
+  {% endblock %}
+
+{% endblock %}

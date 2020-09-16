@@ -1,0 +1,52 @@
+{%extends "main/wrapper.html" %}
+{% load static %}
+{% block title %}
+    Profile
+{% endblock %}
+
+
+{% block content %}
+    <div class="card mb-3"">
+      <div class="row no-gutters p-3 mb-2">
+        <div class="col-md-3">
+          {% if page_user.picture %}
+            <img src="{{page_user.picture.url}}" class="card-img" width="200" height="200">
+          {% else %}
+            <img src="{% static 'main/images/guest.png' %}" class="card-img" width="200">
+          {% endif %}
+        </div>
+        <div class="col-md-9">
+          <div class="card-body">
+            <h5 class="card-title">
+              {{page_user.user.first_name}}
+              {{page_user.user.last_name}}
+            </h5>
+            <p class="small text-muted">
+                {% if page_user.website_url %}
+                <a href="{{page_user.website_url}}"><button type="button" class="btn btn-outline-primary mr-2">Website</button></a>
+                {% endif %}
+                {% if page_user.facebook_url %}
+                  <a href="{{page_user.facebook_url}}"><button type="button" class="btn btn-outline-primary mr-2">Facebook</button></a>
+                {% endif %}
+                {% if page_user.twitter_url %}
+                  <a href="{{page_user.twitter_url}}"><button type="button" class="btn btn-outline-primary mr-2">Twitter</button></a>
+                {% endif %}
+                {% if page_user.instagram_url %}
+                  <a href="{{page_user.instagram_url}}"><button type="button" class="btn btn-outline-primary mr-2">Instagram</button></a>
+                {% endif %}
+            </p>
+             <p class="card-text">{{page_user.bio|safe|linebreaks}}</p>
+          </div>
+        </div>
+      </div>
+      <div class="row justify-content-center p-3 mb-2">
+        <div class="col-4">
+          <button type="button" class="btn btn-light"><a href="{% url 'show_blog' page_user.user.id %}">
+          Back to blog
+          {{page_user.user.first_name}}
+          {{page_user.user.last_name}}
+          </a></button>
+        </div>
+      </div>
+    </div>
+{% endblock %}

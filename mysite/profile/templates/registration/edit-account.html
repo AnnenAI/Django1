@@ -1,0 +1,20 @@
+{% extends 'registration/settings.html'%}
+
+{% block title %}
+  Edit Account
+{% endblock %}
+
+{% block profile %}
+  {% if user.is_authenticated %}
+    <h1>Edit Account</h1>
+    <form method="POST">
+        <div class="col-7">
+            <div class="form-group">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button class="btn btn-success">Update Account</button>
+            </div>
+        </div>
+    </form>
+  {% endif %}
+{% endblock %}

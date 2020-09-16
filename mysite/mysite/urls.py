@@ -23,6 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('main.urls')),
     path('blog/',include('blog.urls')),
-    path('members/',include('django.contrib.auth.urls')),
-    path('members/',include('members.urls')),
+    path('profile/',include('django.contrib.auth.urls')),
+    path('profile/',include('profile.urls')),
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

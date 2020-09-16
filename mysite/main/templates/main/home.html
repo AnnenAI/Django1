@@ -24,14 +24,14 @@
     <h3>Count posts: {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }}.</h3>
     {% for post in page_obj %}
     <div class="row p-3 mb-2 bg-light text-dark">
+      {% if post.picture %}
         <div class="col-2">
-            {% if post.picture %}
-                <img src="{{ post.picture.url }}" style="height: 130px; width:130px;"/>
-            {% endif %}
-       </div>
+          <img src="{{ post.picture.url }}" style="height: 130px; width:130px;"/>
+        </div>
+       {% endif %}
        <div class="col">
             <h5><a href="{% url 'show_post' post.slug %}">{{post.title}}</a></h5>
-            <small>created by <a href="{% url 'show_blog' post.author.id %}"> {{post.author.username}}</a></small><br/>
+            <small>created by <a href="{% url 'show_blog' post.author.id %}"> {{post.author.first_name}} {{post.author.last_name}}</a></small><br/>
             <small>Category : <a href="{% url 'show_category' post.category.slug %}">{{ post.category }}</a></small><br/>
             <small>created : {{ post.post_date|date:"Y-m-d" }}</small><br/>
             <small>edited : {{ post.update_date|date:"Y-m-d" }}</small><br/>
@@ -43,6 +43,4 @@
        </div>
     </div>
     {% endfor %}
-
-    {% include 'blog/_pagination.html'%}
 {% endblock %}

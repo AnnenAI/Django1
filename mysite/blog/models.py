@@ -6,7 +6,7 @@ from ckeditor.fields import RichTextField
 from django.urls import reverse
 
 class Category(models.Model):
-    name = models.CharField(max_length=200,default='General',unique=True)
+    name = models.CharField(max_length=200,unique=True)
     slug = models.SlugField(max_length=250,unique=True)
 
     def __str__(self):
@@ -15,6 +15,18 @@ class Category(models.Model):
     def get_absolute_url(self):
             return reverse('home')
 
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    picture = models.ImageField(upload_to='profile/', null=True, blank=True)
+    bio = models.TextField(null=True,blank=True)
+    website_url = models.CharField(max_length=255,null=True, blank=True)
+    facebook_url = models.CharField(max_length=255,null=True, blank=True)
+    twitter_url = models.CharField(max_length=255,null=True, blank=True)
+    instagram_url = models.CharField(max_length=255,null=True, blank=True)
+
+
+    def __str__(self):
+        return str(self.user)
 
 class Post(models.Model):
     title = models.CharField(max_length=200)
@@ -37,7 +49,7 @@ class Post(models.Model):
         ordering = ["-post_date"]
 
     def get_absolute_url(self):
-            return reverse('show_blog',kwargs={'user_id': self.author.id})
+            return reverse('show_blog',kwargs={'pk': self.author.id})
 
 def check_unique_slug(sender,instance,*args,**kwards):
     slugs = dict(Post.objects.values_list('slug','id'))

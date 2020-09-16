@@ -1,0 +1,18 @@
+{% extends 'registration/settings.html'%}
+
+{% block title %}
+  Edit Profile
+{% endblock %}
+
+{% block profile %}
+  <h1>Edit Profile</h1>
+  <form method="POST"  enctype="multipart/form-data">
+      <div class="col-7">
+          <div class="form-group">
+              {% csrf_token %}
+              {{ form.as_p }}
+              <button class="btn btn-success">Update Profile</button>
+          </div>
+      </div>
+  </form>
+{% endblock %}

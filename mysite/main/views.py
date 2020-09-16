@@ -32,16 +32,27 @@ class FindUserView(ListView):
     def get_context_data(self,*args,**kwards):
         query = self.request.GET.get('q')
         if query:
-            users=Post.objects.filter(author__username__icontains=query).values('author','author__username').annotate(count=Count('author'),categories = Concat('category__name'),
-            categories_slug = Concat('category__slug')).order_by('-count')
+            full_name = query.split(' ')
+            if(len(full_name)==2):
+                firstname=full_name[0]
+                lastname=full_name[1]
+                users = Post.objects.filter((Q(author__first_name__icontains=firstname)&
+                Q(author__last_name__icontains=lastname))|(Q(author__first_name__icontains=lastname)&
+                Q(author__last_name__icontains=firstname))).values('author','author__first_name','author__last_name').annotate(count=Count('author'),
+                categories = Concat('category__name'),categories_slug = Concat('category__slug')).order_by('-count')
+            else:
+                firstname=full_name[0]
+                users = Post.objects.filter(Q(author__first_name__icontains=firstname)|
+                Q(author__last_name__icontains=firstname)).values('author','author__first_name','author__last_name').annotate(count=Count('author'),
+                categories = Concat('category__name'),categories_slug = Concat('category__slug')).order_by('-count')
         else:
-            users=Post.objects.values('author','author__username').annotate(count=Count('author'),categories = Concat('category__name'),
+            users=Post.objects.values('author','author__first_name','author__last_name').annotate(count=Count('author'),categories = Concat('category__name'),
             categories_slug = Concat('category__slug')).order_by('-count')
         context=super(FindUserView,self).get_context_data(*args,**kwards)
-        p = Paginator(users, self.paginate_by)
         users=get_dict_category(users)
+        p = Paginator(users, self.paginate_by)
         context['page_obj']=p.page(context['page_obj'].number)
-        context['nbar']='users'
+        context['nbar']='home'
         return context
 
 class AllUsersView(ListView):
@@ -50,15 +61,13 @@ class AllUsersView(ListView):
     paginate_by=3
 
     def get_context_data(self,*args,**kwards):
-        users=Post.objects.prefetch_related('category')
-        users=Post.objects.values('author','author__username').annotate(count=Count('author'),categories = Concat('category__name'),
+        users=Post.objects.values('author','author__first_name','author__last_name').annotate(count=Count('author'),categories = Concat('category__name'),
         categories_slug = Concat('category__slug')).order_by('-count')
         context=super(AllUsersView,self).get_context_data(*args,**kwards)
-        p = Paginator(users, self.paginate_by)
         users=get_dict_category(users)
-        print(users)
+        p = Paginator(users, self.paginate_by)
         context['page_obj']=p.page(context['page_obj'].number)
-        context['nbar']='users'
+        context['nbar']='home'
         return context
 
 def get_dict_category(users):
@@ -71,6 +80,7 @@ def get_dict_category(users):
         [slug_list.append(category) for category in categories_slug if category not in slug_list]
         dict = {name_list[i]: slug_list[i] for i in range(len(name_list))}
         user['categories']=dict
+        user.pop('categories_slug', None)
         user['count']=len(dict)
     return users
 

@@ -2,52 +2,45 @@ from django.shortcuts import render
 from blog.models import Post, Category, User
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView,DetailView, CreateView, UpdateView, DeleteView
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.http import HttpResponse
+from django.core.paginator import Paginator
+from django.http import HttpResponse,HttpResponseRedirect
 from django.db.models import Q
 from django.urls import reverse_lazy,reverse
-from .forms import EditForm, AddForm
-from django import http
+from .forms import EditForm, AddForm, CategoryAddForm
 
 class CategoryView(ListView):
-    model=Category
+    model=Post
     template_name="blog/show_category.html"
+    paginate_by = 3
 
     def get_context_data(self,*args,**kwards):
         category=Category.objects.get(slug=self.kwargs['category'])
-        print(category)
+        post_list=Post.objects.filter(category__slug=category.slug)
         context=super(CategoryView,self).get_context_data(*args,**kwards)
-        context = {
-            'category':category.name.title,
-            'post_list':Post.objects.filter(category__slug=category.slug),
-        }
+        p = Paginator(post_list, self.paginate_by)
+        context['page_obj']=p.page(context['page_obj'].number)
+        context['nbar']='categories'
+        context['category']=category.name.title
         return context
 
 class CategoriesListView(ListView):
     model=Category
     template_name="blog/categories.html"
-    #context_object_name = 'categories'
 
     def get_context_data(self,*args,**kwards):
         categories=Category.objects.all()
         context=super(CategoriesListView,self).get_context_data(*args,**kwards)
-        context = {
-            'categories':categories,
-            'nbar':'categories',
-        }
+        context['categories']=categories
+        context['nbar']='categories'
         return context
-    #def get_queryset(self):
-    #    categories=Category.objects.all()
-    #    return categories
 
 class PostListView(ListView):
     model=Post
     template_name = 'blog/blog.html'
     paginate_by = 3
-    #context_object_name = 'post_list'
 
     def get_context_data(self,*args,**kwards):
-        user = self.kwargs['user_id']
+        user = self.kwargs['pk']
         post_list=Post.objects.filter(author=user)
         context=super(PostListView,self).get_context_data(*args,**kwards)
         p = Paginator(post_list, self.paginate_by)
@@ -56,9 +49,24 @@ class PostListView(ListView):
         context['author']=User.objects.get(pk=user)
         return context
 
-#   #def get_queryset(self):
-#        user = self.kwargs['user_id']
-#        return list(Post.objects.filter(author=user))
+class SearchListView(ListView):
+    model=Post
+    template_name = 'blog/blog.html'
+    paginate_by = 3
+
+    def get_context_data(self,*args,**kwards):
+        user = self.kwargs['pk']
+        query = self.request.GET.get('q')
+        if query:
+            post_list = Post.objects.filter((Q(title__icontains=query)|Q(body__icontains=query))&Q(author=user)).distinct()
+        else:
+            post_list = Post.objects.filter(author=user)
+        context=super(SearchListView,self).get_context_data(*args,**kwards)
+        p = Paginator(post_list, self.paginate_by)
+        context['post']=p.page(context['page_obj'].number)
+        context['nbar']='blog'
+        context['author']=User.objects.get(pk=user),
+        return context
 
 def LikeView(request,slug):
     post=get_object_or_404(Post, slug=request.POST.get('post_slug'))
@@ -67,28 +75,24 @@ def LikeView(request,slug):
         post.likes.remove(user)
     else:
         post.likes.add(user)
-    return http.HttpResponseRedirect(reverse('show_post',args=[str(slug)]))
+    return HttpResponseRedirect(reverse('show_post',args=[str(slug)]))
 
 class AddPostView(CreateView):
     model=Post
     form_class=AddForm
     template_name='blog/add_post.html'
 
-    def get_context_data(self,*args,**kwards):
-        context=super(AddPostView,self).get_context_data(*args,**kwards)
-        context['nbar']='add_post'
-        return context
-
+    def get_queryset(self):
+        return 'add_post'
 
 class AddCategoryView(CreateView):
     model=Category
-    fields='__all__'
+    form_class=CategoryAddForm
     template_name='blog/add_category.html'
+    context_object_name='nbar'
 
-    def get_context_data(self,*args,**kwards):
-        context=super(AddCategoryView,self).get_context_data(*args,**kwards)
-        context['nbar']='add_category'
-        return context
+    def get_queryset(self):
+        return 'add_category'
 
 class UpdatePostView(UpdateView):
     model=Post
@@ -100,10 +104,10 @@ class DeletePostView(DeleteView):
     template_name='blog/delete_post.html'
 
     def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        success_url=reverse_lazy('show_blog',kwargs={'user_id': request.user.id})
-        self.object.delete()
-        return http.HttpResponseRedirect(success_url)
+        object = get_object_or_404(Post,slug=self.kwargs['slug'])
+        success_url=reverse_lazy('show_blog',kwargs={'pk': request.user.id})
+        object.delete()
+        return HttpResponseRedirect(success_url)
 
 
 class PostDetailView(DetailView):
@@ -113,87 +117,11 @@ class PostDetailView(DetailView):
     def get_context_data(self,*args,**kwards):
         context=super(PostDetailView,self).get_context_data(*args,**kwards)
         slug_text = self.kwargs['slug']
-        context['post']=Post.objects.filter(slug=slug_text)[0]
         stuff =get_object_or_404(Post, slug=slug_text)
         liked=False
         if stuff.likes.filter(id=self.request.user.id).exists():
             liked=True
+        context['post']=Post.objects.filter(slug=slug_text)[0]
         context['total_likes']=stuff.total_likes()
         context['liked']=liked
         return context
-
-class SearchListView(ListView):
-    model=Post
-    template_name = 'blog/blog.html'
-    paginate_by = 3
-    #context_object_name = 'post_list'
-
-    def get_context_data(self,*args,**kwards):
-        user = self.kwargs['user_id']
-        query = self.request.GET.get('q')
-        if query:
-            post_list = Post.objects.filter((Q(title__icontains=query)|Q(body__icontains=query))&Q(author=user)).distinct()
-        else:
-            post_list = Post.objects.filter(author=user)
-        context=super(SearchListView,self).get_context_data(*args,**kwards)
-        p = Paginator(post_list, self.paginate_by)
-        context['page_obj']=p.page(context['page_obj'].number)
-        context['nbar']='blog'
-        context['author']=User.objects.get(pk=user)
-        return context
-
-#    def get_queryset(self):
-#        query = self.request.GET.get('q')
-#        if query:
-#            return Post.objects.filter((Q(title__icontains=query)|Q(body__icontains=query))&Q(author=self.request.user)).distinct()
-#        else:
-#            return Post.objects.filter(author=self.request.user)
-
-"""
-def show_blog(request):
-    template='blog/blog.html'
-    posts=Post.objects.all()[:25]
-    paginator = Paginator(posts, 6)
-    page = request.GET.get('page')
-    try:
-        post_list = paginator.page(page)
-    except PageNotAnInteger:
-        post_list = paginator.page(1)
-    except EmptyPage:
-        post_list = paginator.page(paginator.num_pages)
-    context={
-        'post_list': post_list
-    }
-    return render(request,template,context)
-
-
-def show_post(request,slug_text):
-    template='blog/post.html'
-    query=Post.objects.filter(slug=slug_text)
-    if query.exists():
-        query=query.first()
-    else:
-        return HttpResponse("<h1 align='center'>Page Not Found</h1>")
-    context={
-        'post':query
-    }
-    return render(request,template,context)
-
-def search_post(request):
-    template='blog/blog.html'
-    query=request.GET.get('q')
-    posts=[]
-    posts.extend(Post.objects.filter(Q(title__icontains=query)|Q(body__icontains=query)).distinct())
-    paginator = Paginator(posts, 6)
-    page = request.GET.get('page')
-    try:
-        post_list = paginator.page(page)
-    except PageNotAnInteger:
-        post_list = paginator.page(1)
-    except EmptyPage:
-        post_list = paginator.page(paginator.num_pages)
-    context={
-        'post_list': post_list
-    }
-    return render(request,template,context)
-"""
