@@ -51,6 +51,21 @@ class Post(models.Model):
     def get_absolute_url(self):
             return reverse('show_blog',kwargs={'pk': self.author.id})
 
+class Comment(models.Model):
+    post = models.ForeignKey(Post,related_name="comments", on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    body = models.TextField()
+    date_added = models.DateTimeField(default=datetime.now)
+
+    class Meta:
+        ordering = ['-date_added']
+
+    def __str__(self):
+        return '%s - %s' %(self.post.title,self.name)
+
+    def get_absolute_url(self):
+        return reverse('show_post',kwargs={'pk': self.post.id})
+
 def check_unique_slug(sender,instance,*args,**kwards):
     slugs = dict(Post.objects.values_list('slug','id'))
     unique=False

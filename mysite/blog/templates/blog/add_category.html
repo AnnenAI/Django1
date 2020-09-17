@@ -5,7 +5,6 @@
 {% endblock %}
 
 {% block content %}
-{% if user.is_authenticated %}
   <h1>Add Category</h1>
   <form method="POST">
       <div class="col-7">
@@ -16,9 +15,6 @@
           </div>
       </div>
   </form>
-{% else %}
-  <h2 align="center">Locked</h2>
-{% endif %}
 
 <script type="text/javascript" src="/static/admin/js/urlify.js"></script>
 

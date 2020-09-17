@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post, Category
+from .models import Post, Category, Comment
 
 class AddForm(forms.ModelForm):
     class Meta:
@@ -18,14 +18,15 @@ class AddForm(forms.ModelForm):
 class EditForm(forms.ModelForm):
     class Meta:
         model=Post
-        fields = ('title','category','slug','body','update_date','picture')
+        fields = ('title','category','slug','body','picture')
+        #fields = ('title','category','slug','body','update_date','picture')
 
         widgets = {
             'title':forms.TextInput(attrs={'class':'form-control border border-primary'}),
             'category':forms.Select(attrs={'class':'form-control border border-primary'}),
             'slug':forms.TextInput(attrs={'class':'form-control border border-primary'}),
             'body':forms.Textarea(attrs={'class':'form-control'}),
-            'update_date':forms.HiddenInput(),
+            #'update_date':forms.HiddenInput(),
             'picture':forms.FileInput(attrs={'class':'form-control-file py-2 border'}),
         }
 
@@ -37,4 +38,14 @@ class CategoryAddForm(forms.ModelForm):
         widgets = {
             'name':forms.TextInput(attrs={'class':'form-control border border-primary'}),
             'slug':forms.TextInput(attrs={'class':'form-control border border-primary'}),
+        }
+
+class AddCommentForm(forms.ModelForm):
+    class Meta:
+        model=Comment
+        fields = ('name','body')
+
+        widgets = {
+            'name':forms.TextInput(attrs={'class':'form-control border border-primary'}),
+            'body':forms.Textarea(attrs={'rows': 10,'cols': 80,'class':'form  border-primary'}),
         }

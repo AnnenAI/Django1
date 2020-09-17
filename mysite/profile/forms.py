@@ -43,7 +43,6 @@ class ProfileEditForm(forms.ModelForm):
         }
 
 
-
 class PasswordChangeForm(PasswordChangeForm):
     old_password=forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control border border-primary','type':'password'}))
     new_password1=forms.CharField(max_length=150,widget=forms.PasswordInput(attrs={'class':'form-control border border-primary','type':'password'}))

@@ -71,12 +71,11 @@
           {% endif %}
 
     	</nav>
-
         <!-- Page Content  -->
       <div id="content" class="p-4 p-md-5 pt-5">
             {% block content %}
             {% endblock %}
-            {% if is_paginated %}
+            {% if is_paginated and page_obj.paginator.num_pages > 1 %}
               {% include 'blog/_pagination.html'%}
             {% endif %}
       </div>

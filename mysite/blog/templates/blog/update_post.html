@@ -28,17 +28,4 @@ Updating post
           if (!e._changed) { e.value = URLify(document.getElementById("id_title").value, 50); }
       }
   </script>
-  <script type="text/javascript">
-      document.getElementById("btnSubmit").onclick = function() {
-        const t = new Date();
-        const date = ('0' + t.getDate()).slice(-2);
-        const month = ('0' + (t.getMonth() + 1)).slice(-2);
-        const year = t.getFullYear();
-        const hours = ('0' + t.getHours()).slice(-2);
-        const minutes = ('0' + t.getMinutes()).slice(-2);
-        const seconds = ('0' + t.getSeconds()).slice(-2);
-        const time = `${month}/${date}/${year} ${hours}:${minutes}:${seconds}`;
-        document.getElementById("id_update_date").value =time;
-      };
-  </script>
 {% endblock %}

@@ -1,12 +1,16 @@
 from django.shortcuts import render
-from blog.models import Post, Category, User
+from blog.models import Post, Category, User,Comment
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView,DetailView, CreateView, UpdateView, DeleteView
 from django.core.paginator import Paginator
+from django.db.models.signals import pre_save
 from django.http import HttpResponse,HttpResponseRedirect
 from django.db.models import Q
 from django.urls import reverse_lazy,reverse
-from .forms import EditForm, AddForm, CategoryAddForm
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from .forms import EditForm, AddForm, CategoryAddForm,AddCommentForm
+from datetime import datetime
 
 class CategoryView(ListView):
     model=Post
@@ -14,7 +18,7 @@ class CategoryView(ListView):
     paginate_by = 3
 
     def get_context_data(self,*args,**kwards):
-        category=Category.objects.get(slug=self.kwargs['category'])
+        category=get_object_or_404(Category, slug=self.kwargs['category'])
         post_list=Post.objects.filter(category__slug=category.slug)
         context=super(CategoryView,self).get_context_data(*args,**kwards)
         p = Paginator(post_list, self.paginate_by)
@@ -77,6 +81,7 @@ def LikeView(request,slug):
         post.likes.add(user)
     return HttpResponseRedirect(reverse('show_post',args=[str(slug)]))
 
+@method_decorator(login_required, name='dispatch')
 class AddPostView(CreateView):
     model=Post
     form_class=AddForm
@@ -85,6 +90,16 @@ class AddPostView(CreateView):
     def get_queryset(self):
         return 'add_post'
 
+@method_decorator(login_required, name='dispatch')
+class AddCommentView(CreateView):
+    model=Comment
+    form_class=AddCommentForm
+    template_name='blog/add_comment.html'
+
+    def get_queryset(self):
+        return 'blog'
+
+@method_decorator(login_required, name='dispatch')
 class AddCategoryView(CreateView):
     model=Category
     form_class=CategoryAddForm
@@ -94,10 +109,17 @@ class AddCategoryView(CreateView):
     def get_queryset(self):
         return 'add_category'
 
+@method_decorator(login_required, name='dispatch')
 class UpdatePostView(UpdateView):
     model=Post
     form_class=EditForm
     template_name='blog/update_post.html'
+
+    def form_valid(self,form):
+        self.object=form.save(commit=False)
+        self.object.update_date=datetime.now()
+        self.object.save()
+        return super().form_valid(form)
 
 class DeletePostView(DeleteView):
     model=Post
@@ -110,18 +132,46 @@ class DeletePostView(DeleteView):
         return HttpResponseRedirect(success_url)
 
 
-class PostDetailView(DetailView):
+def PostDetailView(request,slug):
+    model = Post
+    template_name = 'blog/post.html'
+    post =get_object_or_404(Post, slug=slug)
+    if request.method == 'POST':
+        comment_form = AddCommentForm(data=request.POST)
+        if comment_form.is_valid():
+            new_comment = comment_form.save(commit=False)
+            new_comment.post = post
+            new_comment.save()
+            comment_form = AddCommentForm()
+            success_url=reverse_lazy('show_post',kwargs={'slug': slug})
+            return HttpResponseRedirect(success_url)
+    else:
+        comment_form = AddCommentForm()
+    liked=False
+    if post.likes.filter(id=request.user.id).exists():
+        liked=True
+    comments = post.comments.all()
+    context={
+        'post':post,
+        'total_likes':post.total_likes(),
+        'liked':liked,
+        'comment_form':comment_form
+    }
+    return render(request,template_name,context)
+
+"""class PostDetailView(DetailView):
     model = Post
     template_name = 'blog/post.html'
 
     def get_context_data(self,*args,**kwards):
-        context=super(PostDetailView,self).get_context_data(*args,**kwards)
         slug_text = self.kwargs['slug']
-        stuff =get_object_or_404(Post, slug=slug_text)
+        post =get_object_or_404(Post, slug=slug_text)
+        comments = post.comments.all()
+        context=super(PostDetailView,self).get_context_data(*args,**kwards)
         liked=False
-        if stuff.likes.filter(id=self.request.user.id).exists():
+        if post.likes.filter(id=self.request.user.id).exists():
             liked=True
-        context['post']=Post.objects.filter(slug=slug_text)[0]
-        context['total_likes']=stuff.total_likes()
+        context['post']=post
+        context['total_likes']=post.total_likes()
         context['liked']=liked
-        return context
+        return context"""

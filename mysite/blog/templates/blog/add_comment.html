@@ -1,0 +1,11 @@
+{% if user.is_authenticated %}
+  <form method="POST">
+      <div class="col-7">
+          <div class="form-group">
+              {% csrf_token %}
+              {{ comment_form.as_p }}
+              <button class="btn btn-success">Comment it!</button>
+          </div>
+      </div>
+  </form>
+{% endif %}
