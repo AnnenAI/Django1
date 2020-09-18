@@ -1,6 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render,get_object_or_404
 from blog.models import Post, Category, User,Comment
-from django.shortcuts import get_object_or_404
 from django.views.generic import ListView,DetailView, CreateView, UpdateView, DeleteView
 from django.core.paginator import Paginator
 from django.db.models.signals import pre_save
@@ -11,6 +10,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from .forms import EditForm, AddForm, CategoryAddForm,AddCommentForm
 from datetime import datetime
+from blog.mixins import RightToEditMixin
 
 class CategoryView(ListView):
     model=Post
@@ -109,8 +109,7 @@ class AddCategoryView(CreateView):
     def get_queryset(self):
         return 'add_category'
 
-@method_decorator(login_required, name='dispatch')
-class UpdatePostView(UpdateView):
+class UpdatePostView(RightToEditMixin,UpdateView):
     model=Post
     form_class=EditForm
     template_name='blog/update_post.html'
@@ -121,7 +120,7 @@ class UpdatePostView(UpdateView):
         self.object.save()
         return super().form_valid(form)
 
-class DeletePostView(DeleteView):
+class DeletePostView(RightToEditMixin,DeleteView):
     model=Post
     template_name='blog/delete_post.html'
 

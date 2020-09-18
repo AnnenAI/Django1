@@ -63,9 +63,6 @@ class Comment(models.Model):
     def __str__(self):
         return '%s - %s' %(self.post.title,self.name)
 
-    def get_absolute_url(self):
-        return reverse('show_post',kwargs={'pk': self.post.id})
-
 def check_unique_slug(sender,instance,*args,**kwards):
     slugs = dict(Post.objects.values_list('slug','id'))
     unique=False
