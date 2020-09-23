@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django_cleanup',
+    'communication',
     'main',
     'profile',
     'blog',

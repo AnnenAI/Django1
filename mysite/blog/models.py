@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import pre_save
-from datetime import datetime
+from django.utils import timezone
 from ckeditor.fields import RichTextField
 from django.urls import reverse
 
@@ -34,8 +34,8 @@ class Post(models.Model):
     slug = models.SlugField(max_length=250)
     category=models.ForeignKey(Category, on_delete=models.CASCADE)
     body = RichTextField()
-    post_date = models.DateTimeField(default=datetime.now)
-    update_date = models.DateTimeField(default=datetime.now)
+    post_date = models.DateTimeField(default=timezone.localtime(timezone.now()))
+    update_date = models.DateTimeField(default=timezone.localtime(timezone.now()))
     picture = models.ImageField(upload_to='posts/', null=True, blank=True)
     likes = models.ManyToManyField(User,related_name='blog_post')
 
@@ -55,13 +55,14 @@ class Comment(models.Model):
     post = models.ForeignKey(Post,related_name="comments", on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     body = models.TextField()
-    date_added = models.DateTimeField(default=datetime.now)
+    date_added = models.DateTimeField(default=timezone.localtime(timezone.now()))
 
     class Meta:
         ordering = ['-date_added']
 
     def __str__(self):
         return '%s - %s' %(self.post.title,self.name)
+
 
 def check_unique_slug(sender,instance,*args,**kwards):
     slugs = dict(Post.objects.values_list('slug','id'))

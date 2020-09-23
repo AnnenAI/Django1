@@ -4,7 +4,7 @@ from django.views.generic import ListView
 from django.db.models import Q, Count
 from django.core.paginator import Paginator
 from django.db.models import Aggregate, CharField
-
+from django.contrib.postgres.aggregates import ArrayAgg
 
 def contact(request):
     context={'info':{'My Email':'leksey0002@gmail.com','My phone':'380xxxxxxxxx'},'nbar':'contact'}
@@ -39,15 +39,15 @@ class FindUserView(ListView):
                 users = Post.objects.filter((Q(author__first_name__icontains=firstname)&
                 Q(author__last_name__icontains=lastname))|(Q(author__first_name__icontains=lastname)&
                 Q(author__last_name__icontains=firstname))).values('author','author__first_name','author__last_name').annotate(count=Count('author'),
-                categories = Concat('category__name'),categories_slug = Concat('category__slug')).order_by('-count')
+                categories = ArrayAgg('category__name'),categories_slug = ArrayAgg('category__slug')).order_by('-count')
             else:
                 firstname=full_name[0]
                 users = Post.objects.filter(Q(author__first_name__icontains=firstname)|
                 Q(author__last_name__icontains=firstname)).values('author','author__first_name','author__last_name').annotate(count=Count('author'),
-                categories = Concat('category__name'),categories_slug = Concat('category__slug')).order_by('-count')
+                categories = ArrayAgg('category__name'),categories_slug = ArrayAgg('category__slug')).order_by('-count')
         else:
-            users=Post.objects.values('author','author__first_name','author__last_name').annotate(count=Count('author'),categories = Concat('category__name'),
-            categories_slug = Concat('category__slug')).order_by('-count')
+            users=Post.objects.values('author','author__first_name','author__last_name').annotate(count=Count('author'),categories = ArrayAgg('category__name'),
+            categories_slug = ArrayAgg('category__slug')).order_by('-count')
         context=super(FindUserView,self).get_context_data(*args,**kwards)
         users=get_dict_category(users)
         p = Paginator(users, self.paginate_by)
@@ -61,13 +61,11 @@ class AllUsersView(ListView):
     paginate_by=3
 
     def get_context_data(self,*args,**kwards):
-        users=Post.objects.values('author','author__first_name','author__last_name').annotate(count=Count('author'),categories = Concat('category__name'),
-        categories_slug = Concat('category__slug')).order_by('-count')
+        users=Post.objects.values('author','author__first_name','author__last_name').annotate(count=Count('author'),categories = ArrayAgg('category__name'),
+        categories_slug = ArrayAgg('category__slug')).order_by('-count')
         context=super(AllUsersView,self).get_context_data(*args,**kwards)
         users=get_dict_category(users)
         p = Paginator(users, self.paginate_by)
-        print(users.query)
-        print(users)
         context['page_obj']=p.page(context['page_obj'].number)
         context['nbar']='home'
         return context
@@ -81,9 +79,6 @@ def get_dict_category(users):
         user.pop('categories_slug', None)
         user['count']=len(user['categories'])
     return users
-
-class Concat(Aggregate):
-    function = 'array_agg'
 
 class AllSearchListView(ListView):
     model=Post

@@ -46,9 +46,11 @@
             <a href="{% url 'categories_list' %}"><span class="fa fa-object-group mr-3"></span>Categories</a>
           </li>
           {% if user.is_authenticated %}
-              </li>
               <li class="{% if nbar == 'blog' %}active{% endif %}">
                 <a href="{% url 'show_blog' user.id %}"><span class="fa fa-sticky-note-o mr-3"></span>Blog</a>
+              </li>
+              <li class="{% if nbar == 'dialogue' %}active{% endif %}">
+                <a href="{% url 'dialogue' %}"><span class="fa fa-sticky-note-o mr-3"></span>Messages</a>
               </li>
               <li class="{% if nbar == 'add_post' %}active{% endif %}">
                 <a href="{% url 'add_post' %}"><span class="fa fa-pencil-square  mr-3"></span>Add new post</a>

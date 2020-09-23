@@ -9,7 +9,7 @@ from django.urls import reverse_lazy,reverse
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from .forms import EditForm, AddForm, CategoryAddForm,AddCommentForm
-from datetime import datetime
+from django.utils import timezone
 from blog.mixins import RightToEditMixin
 
 class CategoryView(ListView):
@@ -116,7 +116,7 @@ class UpdatePostView(RightToEditMixin,UpdateView):
 
     def form_valid(self,form):
         self.object=form.save(commit=False)
-        self.object.update_date=datetime.now()
+        self.object.update_date=timezone.localtime(timezone.now())
         self.object.save()
         return super().form_valid(form)
 

@@ -5,12 +5,17 @@
 {% block content %}
 
 <div class="row p-3 mb-2">
-  <div class="col-10">
+  <div class="col-8">
     <h3>Blog {{author.first_name}} {{author.last_name}} </h3>
   </div>
   <div class="col">
     <a class="" href="{% url 'profile' author.profile.id %}"><button type="button" class="btn btn-outline-secondary">Profile info</button></a>
   </div>
+  {% if  user.id !=  author.id %}
+  <div class="col">
+    <a class="" href="{% url 'messages' author.id %}"><button type="button" class="btn btn-outline-secondary">Send Message</button></a>
+  </div>
+  {% endif %}
 </div>
   <form method="GET" action="{% url 'search_results' author.id %}">
         <div class="form-row">
