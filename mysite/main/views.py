@@ -66,34 +66,24 @@ class AllUsersView(ListView):
         context=super(AllUsersView,self).get_context_data(*args,**kwards)
         users=get_dict_category(users)
         p = Paginator(users, self.paginate_by)
+        print(users.query)
+        print(users)
         context['page_obj']=p.page(context['page_obj'].number)
         context['nbar']='home'
         return context
 
 def get_dict_category(users):
     for user in users:
-        categories=user['categories'].split(',')
-        categories_slug=user['categories_slug'].split(',')
-        name_list = []
-        [name_list.append(category) for category in categories if category not in name_list]
-        slug_list = []
-        [slug_list.append(category) for category in categories_slug if category not in slug_list]
-        dict = {name_list[i]: slug_list[i] for i in range(len(name_list))}
-        user['categories']=dict
+        categories=user['categories']
+        categories_slug=user['categories_slug']
+        category_dict = ((categories[i], categories_slug[i]) for i in range(len(categories)))
+        user['categories']=dict(category_dict)
         user.pop('categories_slug', None)
-        user['count']=len(dict)
+        user['count']=len(user['categories'])
     return users
 
 class Concat(Aggregate):
-    function = 'GROUP_CONCAT'
-    template = '%(function)s(%(distinct)s%(expressions)s)'
-
-    def __init__(self, expression, distinct=False, **extra):
-        super(Concat, self).__init__(
-            expression,
-            distinct='DISTINCT ' if distinct else '',
-            output_field=CharField(),
-            **extra)
+    function = 'array_agg'
 
 class AllSearchListView(ListView):
     model=Post

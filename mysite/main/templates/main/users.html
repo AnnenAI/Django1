@@ -28,6 +28,7 @@
             <h5><a href="{% url 'show_blog' member.author %}">{{member.author__first_name}} {{member.author__last_name}}</a></h5>
        </div>
        <div class="col">
+         {{member.count}}
          <h6>Categories: </h6>|
          {% for category, slug in member.categories.items %}
            <small><a href="{% url 'show_category' slug %}"> {{ category }}</a></small>|
