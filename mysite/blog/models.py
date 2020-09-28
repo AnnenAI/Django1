@@ -52,10 +52,10 @@ class Post(models.Model):
             return reverse('show_blog',kwargs={'pk': self.author.id})
 
 class Comment(models.Model):
-    post = models.ForeignKey(Post,related_name="comments", on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, related_name="comments", on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     body = models.TextField()
-    date_added = models.DateTimeField(default=timezone.localtime(timezone.now()))
+    date_added = models.DateTimeField(default=timezone.now())
 
     class Meta:
         ordering = ['-date_added']

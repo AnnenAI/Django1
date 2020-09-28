@@ -1,8 +1,7 @@
-from django.shortcuts import render,get_object_or_404
-from blog.models import Post, Category, User,Comment
+from django.shortcuts import render, get_object_or_404
+from .models import Post, Category, User,Comment
 from django.views.generic import ListView,DetailView, CreateView, UpdateView, DeleteView
 from django.core.paginator import Paginator
-from django.db.models.signals import pre_save
 from django.http import HttpResponse,HttpResponseRedirect
 from django.db.models import Q
 from django.urls import reverse_lazy,reverse
@@ -10,7 +9,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from .forms import EditForm, AddForm, CategoryAddForm,AddCommentForm
 from django.utils import timezone
-from blog.mixins import RightToEditMixin
+from .mixins import RightToEditMixin
 
 class CategoryView(ListView):
     model=Post

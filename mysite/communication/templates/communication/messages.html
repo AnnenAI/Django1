@@ -1,9 +1,10 @@
 {%extends "main/wrapper.html" %}
 {% block title %}
-  Messages
+  Chat with {{member.first_name}}  {{member.last_name}}
 {% endblock %}
 {% block content %}
 
+<h3 align="center">Chat with {{member.first_name}}  {{member.last_name}}</h3>
 {% if not messages %}
   <p>No messages yet...</p>
 {% else %}
@@ -13,10 +14,10 @@
      <div class="col">
           <h5><a href="#">{{message.author}}</a></h5>
           <small>{{ message.date_sending|date:'Y-m-d H:i:s' }}</small><br/>
-          <p>{{ message.text }}</p>
+          <p>{{ message.text|linebreaks }}</p>
      </div>
   </div>
-  <hr/>
+
   {% endfor %}
 {% endif %}
 

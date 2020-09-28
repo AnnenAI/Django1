@@ -3,14 +3,12 @@
   Dialogue
 {% endblock %}
 {% block content %}
-
-{{dialogue}}
+{% load tz %}
 {% for dialogue in page_obj %}
 <div class="row p-3 mb-2 bg-light text-dark">
    <div class="col">
-        <h5><a href="{% url 'messages' 2 %}">{{dialogue.users}}</a></h5>
-        <small>last message : {{ dialogue.last_message_date|date:"Y-m-d H:i:s" }}</small><br/>
-        <p>message : {{ dialogue.text }}</p>
+        <h5><a href="{% url 'messages' dialogue.member_id %}">{{dialogue.member__first_name}} {{ dialogue.member__last_name }}</a></h5>
+        <small>last message : {{ dialogue.dialogue__last_message_date|localtime|date:"Y-m-d H:i:s" }}</small><br/>
    </div>
 </div>
 {% endfor %}
