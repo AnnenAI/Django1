@@ -8,13 +8,13 @@
     </title>
     <meta charset="utf-8">
     {% load static %}
-    {% load tz %}
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
 	  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
   </head>
   <body style="background-image: url({% static 'main/images/bg_image.jpg' %})">
+  {% load tz_detect %}
             <div class="wrapper d-flex align-items-stretch">
                 <nav id="sidebar">
                     <div class="custom-menu">
@@ -50,7 +50,7 @@
                     <a href="{% url 'show_blog' user.id %}"><span class="fa fa-sticky-note-o mr-3"></span>Blog</a>
                   </li>
                   <li class="{% if nbar == 'dialogue' %}active{% endif %}">
-                    <a href="{% url 'dialogue' %}"><span class="fa fa-sticky-note-o mr-3"></span>Messages</a>
+                    <a href="{% url 'dialogue' %}"><span class="fa fa-comments-o mr-3"></span>Messages</a>
                   </li>
                   <li class="{% if nbar == 'add_post' %}active{% endif %}">
                     <a href="{% url 'add_post' %}"><span class="fa fa-pencil-square  mr-3"></span>Add new post</a>
@@ -85,5 +85,8 @@
         <script src="{% static 'main/js/popper.js' %}"></script>
         <script src="{% static 'main/js/bootstrap.min.js' %}"></script>
         <script src="{% static 'main/js/main.js' %}"></script>
+        {% block script %}
+        {% endblock %}
+  {% tz_detect %}
   </body>
 </html>

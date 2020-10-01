@@ -21,7 +21,6 @@ class DialogueView(ListView):
         user = get_object_or_404(User, id=self.request.user.id)
         dialogue = Users.objects.select_related('member','dialogue').values(
             'member_id','member__first_name','member__last_name','dialogue__last_message_date').filter(user=user.id)
-        print(dialogue)
         context=super(DialogueView,self).get_context_data(*args,**kwards)
         p = Paginator(dialogue, self.paginate_by)
         context['page_obj']=p.page(context['page_obj'].number)

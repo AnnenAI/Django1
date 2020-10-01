@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from .models import Post, Category, User,Comment
 from django.views.generic import ListView,DetailView, CreateView, UpdateView, DeleteView
 from django.core.paginator import Paginator
-from django.http import HttpResponse,HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.db.models import Q
 from django.urls import reverse_lazy,reverse
 from django.utils.decorators import method_decorator
@@ -70,7 +70,7 @@ class SearchListView(ListView):
         context['nbar']='blog'
         context['author']=User.objects.get(pk=user),
         return context
-
+"""
 def LikeView(request,slug):
     post=get_object_or_404(Post, slug=request.POST.get('post_slug'))
     user=request.user
@@ -79,6 +79,21 @@ def LikeView(request,slug):
     else:
         post.likes.add(user)
     return HttpResponseRedirect(reverse('show_post',args=[str(slug)]))
+"""
+
+def LikeView(request):
+    slug=request.POST.get('slug')
+    post=get_object_or_404(Post, slug=slug)
+    user=request.user
+    context={}
+    if post.likes.filter(id=user.id).exists():
+        post.likes.remove(user)
+        context['liked']=False
+    else:
+        post.likes.add(user)
+        context['liked'] = True
+    context['total_likes']=post.total_likes()
+    return JsonResponse(context,status=200)
 
 @method_decorator(login_required, name='dispatch')
 class AddPostView(CreateView):

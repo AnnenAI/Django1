@@ -3,7 +3,6 @@
   Chat with {{member.first_name}}  {{member.last_name}}
 {% endblock %}
 {% block content %}
-
 <h3 align="center">Chat with {{member.first_name}}  {{member.last_name}}</h3>
 {% if not messages %}
   <p>No messages yet...</p>
@@ -20,6 +19,5 @@
 
   {% endfor %}
 {% endif %}
-
 {% include 'communication/send_message.html' %}
 {% endblock %}

@@ -5,6 +5,7 @@
 
 
 {% block content %}
+{% load static %}
 <div class="row p-3 mb-2 bg-light text-dark">
   {% if post.picture %}
     <div class="col-2">
@@ -26,23 +27,26 @@
   {{post.body|safe|linebreaks}}
 </div>
 <div class="row p-3 mb-2 bg-light text-dark">
-  <button type="button" class="btn btn-light"><a href="{% url 'show_blog' post.author.id %}">
-    Back to blog
-    {{post.author.first_name}}
-    {{post.author.last_name}}
-</a></button>
-  <hr/>
-  <form action="{% url 'like_post' post.slug %}" method="POST">
+  <div class="col-9">
+  <button type="button" class="btn btn-light">
+    <a href="{% url 'show_blog' post.author.id %}">
+      Back to blog
+      {{post.author.first_name}}
+      {{post.author.last_name}}
+    </a>
+  </button>
+  </div>
+  <div class="col">
     {% if user.is_authenticated %}
       {% csrf_token %}
       {% if liked %}
-        <button type="submit" name="post_slug" value="{{post.slug}}" class="btn btn-light fa fa-heart"> UnLike</button>
+        <button type="submit" id="post_like_btn" value="{{post.slug}}" class="btn btn-light fa fa-heart"> UnLike</button>
       {% else %}
-        <button type="submit" name="post_slug" value="{{post.slug}}" class="btn btn-light fa fa-heart-o"> Like</button>
+        <button type="submit" id="post_like_btn" value="{{post.slug}}" class="btn btn-light fa fa-heart-o"> Like</button>
       {% endif %}
     {% endif %}
-    Total likes: {{total_likes}}
-    </form>
+    <small name="total_likes" id="id_total_likes">Total likes: {{total_likes}}</small>
+  </div>
 </div>
   {% include 'blog/add_comment.html' %}
   {% if not post.comments.all %}
@@ -63,4 +67,10 @@
       <hr/>
     {% endfor %}
   {% endif %}
+
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'blog/js/jquery-3.5.1.min.js' %}"></script>
+  <script src="{% static 'blog/js/scripts.js' %}"></script>
 {% endblock %}

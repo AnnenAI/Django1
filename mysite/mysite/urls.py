@@ -26,4 +26,5 @@ urlpatterns = [
     path('profile/',include('django.contrib.auth.urls')),
     path('profile/',include('profile.urls')),
     path('messages/',include('communication.urls')),
+    path('tz_detect/', include('tz_detect.urls')),
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

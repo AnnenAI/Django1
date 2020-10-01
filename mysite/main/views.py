@@ -1,9 +1,8 @@
 from django.shortcuts import render
-from blog.models import Post, User
+from blog.models import Post
 from django.views.generic import ListView
 from django.db.models import Q, Count
 from django.core.paginator import Paginator
-from django.db.models import Aggregate, CharField
 from django.contrib.postgres.aggregates import ArrayAgg
 
 def contact(request):
