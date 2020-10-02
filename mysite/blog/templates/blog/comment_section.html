@@ -1,0 +1,20 @@
+<div id="comments">
+{% if not comments %}
+    <p>No comments yet...</p>
+  {% else %}
+  <br/>
+  <h3>Comments</h3>
+    {% for comment in comments %}
+      <hr/>
+        <strong>
+          {{comment.name}}
+        </strong>
+        <small>
+          {{ comment.date_added }}
+        </small>
+        <br/>
+        {{ comment.body|linebreaks }}
+      <hr/>
+    {% endfor %}
+  {% endif %}
+</div>

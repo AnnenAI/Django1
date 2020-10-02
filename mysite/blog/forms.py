@@ -38,6 +38,7 @@ class CategoryAddForm(forms.ModelForm):
             'slug':forms.TextInput(attrs={'class':'form-control border border-primary'}),
         }
 
+"""
 class AddCommentForm(forms.ModelForm):
     class Meta:
         model=Comment
@@ -47,3 +48,4 @@ class AddCommentForm(forms.ModelForm):
             'name':forms.TextInput(attrs={'class':'form-control border border-primary'}),
             'body':forms.Textarea(attrs={'rows': 10,'cols': 80,'class':'form  border-primary'}),
         }
+"""

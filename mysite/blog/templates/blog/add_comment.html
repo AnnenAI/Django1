@@ -1,12 +1,17 @@
 {% if user.is_authenticated %}
 <h3>Add comment</h3>
-  <form method="POST">
       <div class="col-7">
           <div class="form-group">
-              {% csrf_token %}
-              {{ comment_form.as_p }}
-              <button class="btn btn-success">Comment it!</button>
+              {{ csrt_token }}
+              <p>
+                  <label>Name:</label>
+                  <input type="text" id="name_comment" name="name" class="form-control border border-primary" maxlength="255">
+              </p>
+              <p>
+                  <label>Body:</label>
+                  <textarea name="body" id="body_comment"  cols="80" rows="10" class="form  border-primary"></textarea>
+              </p>
+              <button class="btn btn-success" id="comment_btn" value="novyj-post-proverka-timezone">Comment it!</button>
           </div>
       </div>
-  </form>
 {% endif %}

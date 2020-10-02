@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404
+from django.template.loader import render_to_string
+import json
 from .models import Post, Category, User,Comment
 from django.views.generic import ListView,DetailView, CreateView, UpdateView, DeleteView
 from django.core.paginator import Paginator
@@ -7,7 +9,7 @@ from django.db.models import Q
 from django.urls import reverse_lazy,reverse
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from .forms import EditForm, AddForm, CategoryAddForm,AddCommentForm
+from .forms import EditForm, AddForm, CategoryAddForm
 from django.utils import timezone
 from .mixins import RightToEditMixin
 
@@ -81,6 +83,7 @@ def LikeView(request,slug):
     return HttpResponseRedirect(reverse('show_post',args=[str(slug)]))
 """
 
+@login_required
 def LikeView(request):
     slug=request.POST.get('slug')
     post=get_object_or_404(Post, slug=slug)
@@ -92,8 +95,10 @@ def LikeView(request):
     else:
         post.likes.add(user)
         context['liked'] = True
-    context['total_likes']=post.total_likes()
-    return JsonResponse(context,status=200)
+    if request.is_ajax():
+        context['total_likes']=post.total_likes()
+        return JsonResponse(context,status=200)
+    return HttpResponseRedirect(reverse('show_post',args=[str(slug)]))
 
 @method_decorator(login_required, name='dispatch')
 class AddPostView(CreateView):
@@ -103,15 +108,6 @@ class AddPostView(CreateView):
 
     def get_queryset(self):
         return 'add_post'
-
-@method_decorator(login_required, name='dispatch')
-class AddCommentView(CreateView):
-    model=Comment
-    form_class=AddCommentForm
-    template_name='blog/add_comment.html'
-
-    def get_queryset(self):
-        return 'blog'
 
 @method_decorator(login_required, name='dispatch')
 class AddCategoryView(CreateView):
@@ -150,25 +146,26 @@ def PostDetailView(request,slug):
     template_name = 'blog/post.html'
     post =get_object_or_404(Post, slug=slug)
     if request.method == 'POST':
-        comment_form = AddCommentForm(data=request.POST)
-        if comment_form.is_valid():
-            new_comment = comment_form.save(commit=False)
-            new_comment.post = post
-            new_comment.save()
-            comment_form = AddCommentForm()
-            success_url=reverse_lazy('show_post',kwargs={'slug': slug})
-            return HttpResponseRedirect(success_url)
-    else:
-        comment_form = AddCommentForm()
+        new_comment =Comment()
+        new_comment.name=request.POST.get('name')
+        new_comment.body=request.POST.get('body')
+        new_comment.post = post
+        new_comment.save()
+        comments = post.comments.all()
+        if request.is_ajax():
+            data = render_to_string('blog/comment_section.html', {'comments': comments})
+            return JsonResponse(data, safe=False)
+        success_url=reverse_lazy('show_post',kwargs={'slug': slug})
+        return HttpResponseRedirect(success_url)
     liked=False
     if post.likes.filter(id=request.user.id).exists():
         liked=True
-    comments = post.comments.all()
+    comments = list(post.comments.all().values('name','body','date_added'))
     context={
+        'comments': comments,
         'post':post,
         'total_likes':post.total_likes(),
         'liked':liked,
-        'comment_form':comment_form
     }
     return render(request,template_name,context)
 
